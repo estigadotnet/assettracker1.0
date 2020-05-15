@@ -925,7 +925,7 @@
         <phrase id="fldcaption" value="Property" />
       </field>
       <field id="location_id">
-        <phrase id="fldcaption" value="Location" />
+        <phrase id="fldcaption" value="Department" />
       </field>
       <field id="signature_id">
         <phrase id="fldcaption" value="Signature" />
