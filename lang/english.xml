@@ -877,8 +877,11 @@
     <menu id="34">
       <phrase id="menutext" value="Proses" />
     </menu>
-    <menu id="44">
+    <menu id="48">
       <phrase id="menutext" value="Handover" />
+    </menu>
+    <menu id="49">
+      <phrase id="menutext" value="Handover - Detail" />
     </menu>
     <menu id="5">
       <phrase id="menutext" value="Opname" />
@@ -991,6 +994,48 @@
         <phrase id="fldcaption" value="Qty" />
       </field>
     </table>
+    <table id="t101_ho_head">
+      <phrase id="tblcaption" value="Handover" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="tr_no">
+        <phrase id="fldcaption" value="Transaction No." />
+      </field>
+      <field id="tr_date">
+        <phrase id="fldcaption" value="Transaction Date" />
+      </field>
+      <field id="ho_to">
+        <phrase id="fldcaption" value="Handed Over To" />
+      </field>
+      <field id="cno_to">
+        <phrase id="fldcaption" value="Code Number" />
+      </field>
+      <field id="dept_to">
+        <phrase id="fldcaption" value="Department" />
+      </field>
+      <field id="ho_by">
+        <phrase id="fldcaption" value="Handed Over By" />
+      </field>
+      <field id="cno_by">
+        <phrase id="fldcaption" value="Code Number" />
+      </field>
+      <field id="dept_by">
+        <phrase id="fldcaption" value="Department" />
+      </field>
+      <field id="sign1">
+        <phrase id="fldcaption" value="Sign 1" />
+      </field>
+      <field id="sign2">
+        <phrase id="fldcaption" value="Sign 2" />
+      </field>
+      <field id="sign3">
+        <phrase id="fldcaption" value="Sign 3" />
+      </field>
+      <field id="sign4">
+        <phrase id="fldcaption" value="Sign 4" />
+      </field>
+    </table>
     <table id="t101_opname">
       <phrase id="tblcaption" value="Opname" />
       <field id="id">
@@ -1022,6 +1067,36 @@
       </field>
       <field id="remarks">
         <phrase id="fldcaption" value="Remarks" />
+      </field>
+    </table>
+    <table id="t102_ho_detail">
+      <phrase id="tblcaption" value="Handover - Detail" />
+      <field id="id">
+        <phrase id="fldcaption" value="id" />
+      </field>
+      <field id="hohead_id">
+        <phrase id="fldcaption" value="hohead id" />
+      </field>
+      <field id="asset_id">
+        <phrase id="fldcaption" value="asset id" />
+      </field>
+      <field id="proc_date">
+        <phrase id="fldcaption" value="proc date" />
+      </field>
+      <field id="proc_ccost">
+        <phrase id="fldcaption" value="proc ccost" />
+      </field>
+      <field id="dep_amount">
+        <phrase id="fldcaption" value="dep amount" />
+      </field>
+      <field id="dep_ytd">
+        <phrase id="fldcaption" value="dep ytd" />
+      </field>
+      <field id="nb_val">
+        <phrase id="fldcaption" value="nb val" />
+      </field>
+      <field id="remarks">
+        <phrase id="fldcaption" value="remarks" />
       </field>
     </table>
     <table id="t201_users">

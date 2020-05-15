@@ -4,7 +4,7 @@ namespace PHPMaker2020\p_assettracker1_0;
 /**
  * Page class
  */
-class t204_audittrail_edit extends t204_audittrail
+class t102_ho_detail_edit extends t102_ho_detail
 {
 
 	// Page ID
@@ -14,10 +14,10 @@ class t204_audittrail_edit extends t204_audittrail
 	public $ProjectID = "{A1916BF1-858E-4493-B275-C510122AD7E3}";
 
 	// Table name
-	public $TableName = 't204_audittrail';
+	public $TableName = 't102_ho_detail';
 
 	// Page object name
-	public $PageObjName = "t204_audittrail_edit";
+	public $PageObjName = "t102_ho_detail_edit";
 
 	// Audit Trail
 	public $AuditTrailOnAdd = TRUE;
@@ -349,11 +349,15 @@ class t204_audittrail_edit extends t204_audittrail
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t204_audittrail)
-		if (!isset($GLOBALS["t204_audittrail"]) || get_class($GLOBALS["t204_audittrail"]) == PROJECT_NAMESPACE . "t204_audittrail") {
-			$GLOBALS["t204_audittrail"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t204_audittrail"];
+		// Table object (t102_ho_detail)
+		if (!isset($GLOBALS["t102_ho_detail"]) || get_class($GLOBALS["t102_ho_detail"]) == PROJECT_NAMESPACE . "t102_ho_detail") {
+			$GLOBALS["t102_ho_detail"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t102_ho_detail"];
 		}
+
+		// Table object (t101_ho_head)
+		if (!isset($GLOBALS['t101_ho_head']))
+			$GLOBALS['t101_ho_head'] = new t101_ho_head();
 
 		// Table object (t201_users)
 		if (!isset($GLOBALS['t201_users']))
@@ -365,7 +369,7 @@ class t204_audittrail_edit extends t204_audittrail
 
 		// Table name (for backward compatibility only)
 		if (!defined(PROJECT_NAMESPACE . "TABLE_NAME"))
-			define(PROJECT_NAMESPACE . "TABLE_NAME", 't204_audittrail');
+			define(PROJECT_NAMESPACE . "TABLE_NAME", 't102_ho_detail');
 
 		// Start timer
 		if (!isset($GLOBALS["DebugTimer"]))
@@ -394,14 +398,14 @@ class t204_audittrail_edit extends t204_audittrail
 		Page_Unloaded();
 
 		// Export
-		global $t204_audittrail;
+		global $t102_ho_detail;
 		if ($this->CustomExport && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, Config("EXPORT_CLASSES"))) {
 				$content = ob_get_contents();
 			if ($ExportFileName == "")
 				$ExportFileName = $this->TableVar;
 			$class = PROJECT_NAMESPACE . Config("EXPORT_CLASSES." . $this->CustomExport);
 			if (class_exists($class)) {
-				$doc = new $class($t204_audittrail);
+				$doc = new $class($t102_ho_detail);
 				$doc->Text = @$content;
 				if ($this->isExport("email"))
 					echo $this->exportEmail($doc->Text);
@@ -436,7 +440,7 @@ class t204_audittrail_edit extends t204_audittrail
 				$pageName = GetPageName($url);
 				if ($pageName != $this->getListUrl()) { // Not List page
 					$row["caption"] = $this->getModalCaption($pageName);
-					if ($pageName == "t204_audittrailview.php")
+					if ($pageName == "t102_ho_detailview.php")
 						$row["view"] = "1";
 				} else { // List page should not be shown as modal => error
 					$row["error"] = $this->getFailureMessage();
@@ -671,7 +675,7 @@ class t204_audittrail_edit extends t204_audittrail
 				$Security->saveLastUrl();
 				$this->setFailureMessage(DeniedMessage()); // Set no permission
 				if ($Security->canList())
-					$this->terminate(GetUrl("t204_audittraillist.php"));
+					$this->terminate(GetUrl("t102_ho_detaillist.php"));
 				else
 					$this->terminate(GetUrl("login.php"));
 				return;
@@ -686,16 +690,15 @@ class t204_audittrail_edit extends t204_audittrail
 		// Create form object
 		$CurrentForm = new HttpForm();
 		$this->CurrentAction = Param("action"); // Set up current action
-		$this->id->setVisibility();
-		$this->datetime->setVisibility();
-		$this->script->setVisibility();
-		$this->user->setVisibility();
-		$this->_action->setVisibility();
-		$this->_table->setVisibility();
-		$this->field->setVisibility();
-		$this->keyvalue->setVisibility();
-		$this->oldvalue->setVisibility();
-		$this->newvalue->setVisibility();
+		$this->id->Visible = FALSE;
+		$this->hohead_id->setVisibility();
+		$this->asset_id->setVisibility();
+		$this->proc_date->setVisibility();
+		$this->proc_ccost->setVisibility();
+		$this->dep_amount->setVisibility();
+		$this->dep_ytd->setVisibility();
+		$this->nb_val->setVisibility();
+		$this->remarks->setVisibility();
 		$this->hideFieldsForAddEdit();
 
 		// Do not use lookup cache
@@ -721,7 +724,7 @@ class t204_audittrail_edit extends t204_audittrail
 
 		if (!$Security->canEdit()) {
 			$this->setFailureMessage(DeniedMessage()); // No permission
-			$this->terminate("t204_audittraillist.php");
+			$this->terminate("t102_ho_detaillist.php");
 			return;
 		}
 
@@ -790,6 +793,9 @@ class t204_audittrail_edit extends t204_audittrail
 				}
 			}
 
+			// Set up master detail parameters
+			$this->setupMasterParms();
+
 			// Load current record
 			$loaded = $this->loadRow();
 		}
@@ -820,12 +826,12 @@ class t204_audittrail_edit extends t204_audittrail
 				if (!$loaded) { // Load record based on key
 					if ($this->getFailureMessage() == "")
 						$this->setFailureMessage($Language->phrase("NoRecord")); // No record found
-					$this->terminate("t204_audittraillist.php"); // No matching record, return to list
+					$this->terminate("t102_ho_detaillist.php"); // No matching record, return to list
 				}
 				break;
 			case "update": // Update
 				$returnUrl = $this->getReturnUrl();
-				if (GetPageName($returnUrl) == "t204_audittraillist.php")
+				if (GetPageName($returnUrl) == "t102_ho_detaillist.php")
 					$returnUrl = $this->addMasterUrl($returnUrl); // List page, return to List page with correct master key if necessary
 				$this->SendEmail = TRUE; // Send email on update success
 				if ($this->editRow()) { // Update record based on key
@@ -870,92 +876,83 @@ class t204_audittrail_edit extends t204_audittrail
 		// Load from form
 		global $CurrentForm;
 
+		// Check field name 'hohead_id' first before field var 'x_hohead_id'
+		$val = $CurrentForm->hasValue("hohead_id") ? $CurrentForm->getValue("hohead_id") : $CurrentForm->getValue("x_hohead_id");
+		if (!$this->hohead_id->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->hohead_id->Visible = FALSE; // Disable update for API request
+			else
+				$this->hohead_id->setFormValue($val);
+		}
+
+		// Check field name 'asset_id' first before field var 'x_asset_id'
+		$val = $CurrentForm->hasValue("asset_id") ? $CurrentForm->getValue("asset_id") : $CurrentForm->getValue("x_asset_id");
+		if (!$this->asset_id->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->asset_id->Visible = FALSE; // Disable update for API request
+			else
+				$this->asset_id->setFormValue($val);
+		}
+
+		// Check field name 'proc_date' first before field var 'x_proc_date'
+		$val = $CurrentForm->hasValue("proc_date") ? $CurrentForm->getValue("proc_date") : $CurrentForm->getValue("x_proc_date");
+		if (!$this->proc_date->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->proc_date->Visible = FALSE; // Disable update for API request
+			else
+				$this->proc_date->setFormValue($val);
+			$this->proc_date->CurrentValue = UnFormatDateTime($this->proc_date->CurrentValue, 0);
+		}
+
+		// Check field name 'proc_ccost' first before field var 'x_proc_ccost'
+		$val = $CurrentForm->hasValue("proc_ccost") ? $CurrentForm->getValue("proc_ccost") : $CurrentForm->getValue("x_proc_ccost");
+		if (!$this->proc_ccost->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->proc_ccost->Visible = FALSE; // Disable update for API request
+			else
+				$this->proc_ccost->setFormValue($val);
+		}
+
+		// Check field name 'dep_amount' first before field var 'x_dep_amount'
+		$val = $CurrentForm->hasValue("dep_amount") ? $CurrentForm->getValue("dep_amount") : $CurrentForm->getValue("x_dep_amount");
+		if (!$this->dep_amount->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->dep_amount->Visible = FALSE; // Disable update for API request
+			else
+				$this->dep_amount->setFormValue($val);
+		}
+
+		// Check field name 'dep_ytd' first before field var 'x_dep_ytd'
+		$val = $CurrentForm->hasValue("dep_ytd") ? $CurrentForm->getValue("dep_ytd") : $CurrentForm->getValue("x_dep_ytd");
+		if (!$this->dep_ytd->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->dep_ytd->Visible = FALSE; // Disable update for API request
+			else
+				$this->dep_ytd->setFormValue($val);
+		}
+
+		// Check field name 'nb_val' first before field var 'x_nb_val'
+		$val = $CurrentForm->hasValue("nb_val") ? $CurrentForm->getValue("nb_val") : $CurrentForm->getValue("x_nb_val");
+		if (!$this->nb_val->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->nb_val->Visible = FALSE; // Disable update for API request
+			else
+				$this->nb_val->setFormValue($val);
+		}
+
+		// Check field name 'remarks' first before field var 'x_remarks'
+		$val = $CurrentForm->hasValue("remarks") ? $CurrentForm->getValue("remarks") : $CurrentForm->getValue("x_remarks");
+		if (!$this->remarks->IsDetailKey) {
+			if (IsApi() && $val == NULL)
+				$this->remarks->Visible = FALSE; // Disable update for API request
+			else
+				$this->remarks->setFormValue($val);
+		}
+
 		// Check field name 'id' first before field var 'x_id'
 		$val = $CurrentForm->hasValue("id") ? $CurrentForm->getValue("id") : $CurrentForm->getValue("x_id");
 		if (!$this->id->IsDetailKey)
 			$this->id->setFormValue($val);
-
-		// Check field name 'datetime' first before field var 'x_datetime'
-		$val = $CurrentForm->hasValue("datetime") ? $CurrentForm->getValue("datetime") : $CurrentForm->getValue("x_datetime");
-		if (!$this->datetime->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->datetime->Visible = FALSE; // Disable update for API request
-			else
-				$this->datetime->setFormValue($val);
-			$this->datetime->CurrentValue = UnFormatDateTime($this->datetime->CurrentValue, 0);
-		}
-
-		// Check field name 'script' first before field var 'x_script'
-		$val = $CurrentForm->hasValue("script") ? $CurrentForm->getValue("script") : $CurrentForm->getValue("x_script");
-		if (!$this->script->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->script->Visible = FALSE; // Disable update for API request
-			else
-				$this->script->setFormValue($val);
-		}
-
-		// Check field name 'user' first before field var 'x_user'
-		$val = $CurrentForm->hasValue("user") ? $CurrentForm->getValue("user") : $CurrentForm->getValue("x_user");
-		if (!$this->user->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->user->Visible = FALSE; // Disable update for API request
-			else
-				$this->user->setFormValue($val);
-		}
-
-		// Check field name '_action' first before field var 'x__action'
-		$val = $CurrentForm->hasValue("_action") ? $CurrentForm->getValue("_action") : $CurrentForm->getValue("x__action");
-		if (!$this->_action->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->_action->Visible = FALSE; // Disable update for API request
-			else
-				$this->_action->setFormValue($val);
-		}
-
-		// Check field name 'table' first before field var 'x__table'
-		$val = $CurrentForm->hasValue("table") ? $CurrentForm->getValue("table") : $CurrentForm->getValue("x__table");
-		if (!$this->_table->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->_table->Visible = FALSE; // Disable update for API request
-			else
-				$this->_table->setFormValue($val);
-		}
-
-		// Check field name 'field' first before field var 'x_field'
-		$val = $CurrentForm->hasValue("field") ? $CurrentForm->getValue("field") : $CurrentForm->getValue("x_field");
-		if (!$this->field->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->field->Visible = FALSE; // Disable update for API request
-			else
-				$this->field->setFormValue($val);
-		}
-
-		// Check field name 'keyvalue' first before field var 'x_keyvalue'
-		$val = $CurrentForm->hasValue("keyvalue") ? $CurrentForm->getValue("keyvalue") : $CurrentForm->getValue("x_keyvalue");
-		if (!$this->keyvalue->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->keyvalue->Visible = FALSE; // Disable update for API request
-			else
-				$this->keyvalue->setFormValue($val);
-		}
-
-		// Check field name 'oldvalue' first before field var 'x_oldvalue'
-		$val = $CurrentForm->hasValue("oldvalue") ? $CurrentForm->getValue("oldvalue") : $CurrentForm->getValue("x_oldvalue");
-		if (!$this->oldvalue->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->oldvalue->Visible = FALSE; // Disable update for API request
-			else
-				$this->oldvalue->setFormValue($val);
-		}
-
-		// Check field name 'newvalue' first before field var 'x_newvalue'
-		$val = $CurrentForm->hasValue("newvalue") ? $CurrentForm->getValue("newvalue") : $CurrentForm->getValue("x_newvalue");
-		if (!$this->newvalue->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->newvalue->Visible = FALSE; // Disable update for API request
-			else
-				$this->newvalue->setFormValue($val);
-		}
 	}
 
 	// Restore form values
@@ -963,16 +960,15 @@ class t204_audittrail_edit extends t204_audittrail
 	{
 		global $CurrentForm;
 		$this->id->CurrentValue = $this->id->FormValue;
-		$this->datetime->CurrentValue = $this->datetime->FormValue;
-		$this->datetime->CurrentValue = UnFormatDateTime($this->datetime->CurrentValue, 0);
-		$this->script->CurrentValue = $this->script->FormValue;
-		$this->user->CurrentValue = $this->user->FormValue;
-		$this->_action->CurrentValue = $this->_action->FormValue;
-		$this->_table->CurrentValue = $this->_table->FormValue;
-		$this->field->CurrentValue = $this->field->FormValue;
-		$this->keyvalue->CurrentValue = $this->keyvalue->FormValue;
-		$this->oldvalue->CurrentValue = $this->oldvalue->FormValue;
-		$this->newvalue->CurrentValue = $this->newvalue->FormValue;
+		$this->hohead_id->CurrentValue = $this->hohead_id->FormValue;
+		$this->asset_id->CurrentValue = $this->asset_id->FormValue;
+		$this->proc_date->CurrentValue = $this->proc_date->FormValue;
+		$this->proc_date->CurrentValue = UnFormatDateTime($this->proc_date->CurrentValue, 0);
+		$this->proc_ccost->CurrentValue = $this->proc_ccost->FormValue;
+		$this->dep_amount->CurrentValue = $this->dep_amount->FormValue;
+		$this->dep_ytd->CurrentValue = $this->dep_ytd->FormValue;
+		$this->nb_val->CurrentValue = $this->nb_val->FormValue;
+		$this->remarks->CurrentValue = $this->remarks->FormValue;
 	}
 
 	// Load row based on key values
@@ -1011,15 +1007,14 @@ class t204_audittrail_edit extends t204_audittrail
 		if (!$rs || $rs->EOF)
 			return;
 		$this->id->setDbValue($row['id']);
-		$this->datetime->setDbValue($row['datetime']);
-		$this->script->setDbValue($row['script']);
-		$this->user->setDbValue($row['user']);
-		$this->_action->setDbValue($row['action']);
-		$this->_table->setDbValue($row['table']);
-		$this->field->setDbValue($row['field']);
-		$this->keyvalue->setDbValue($row['keyvalue']);
-		$this->oldvalue->setDbValue($row['oldvalue']);
-		$this->newvalue->setDbValue($row['newvalue']);
+		$this->hohead_id->setDbValue($row['hohead_id']);
+		$this->asset_id->setDbValue($row['asset_id']);
+		$this->proc_date->setDbValue($row['proc_date']);
+		$this->proc_ccost->setDbValue($row['proc_ccost']);
+		$this->dep_amount->setDbValue($row['dep_amount']);
+		$this->dep_ytd->setDbValue($row['dep_ytd']);
+		$this->nb_val->setDbValue($row['nb_val']);
+		$this->remarks->setDbValue($row['remarks']);
 	}
 
 	// Return a row with default values
@@ -1027,15 +1022,14 @@ class t204_audittrail_edit extends t204_audittrail
 	{
 		$row = [];
 		$row['id'] = NULL;
-		$row['datetime'] = NULL;
-		$row['script'] = NULL;
-		$row['user'] = NULL;
-		$row['action'] = NULL;
-		$row['table'] = NULL;
-		$row['field'] = NULL;
-		$row['keyvalue'] = NULL;
-		$row['oldvalue'] = NULL;
-		$row['newvalue'] = NULL;
+		$row['hohead_id'] = NULL;
+		$row['asset_id'] = NULL;
+		$row['proc_date'] = NULL;
+		$row['proc_ccost'] = NULL;
+		$row['dep_amount'] = NULL;
+		$row['dep_ytd'] = NULL;
+		$row['nb_val'] = NULL;
+		$row['remarks'] = NULL;
 		return $row;
 	}
 
@@ -1068,21 +1062,36 @@ class t204_audittrail_edit extends t204_audittrail
 		global $Security, $Language, $CurrentLanguage;
 
 		// Initialize URLs
-		// Call Row_Rendering event
+		// Convert decimal values if posted back
 
+		if ($this->proc_ccost->FormValue == $this->proc_ccost->CurrentValue && is_numeric(ConvertToFloatString($this->proc_ccost->CurrentValue)))
+			$this->proc_ccost->CurrentValue = ConvertToFloatString($this->proc_ccost->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->dep_amount->FormValue == $this->dep_amount->CurrentValue && is_numeric(ConvertToFloatString($this->dep_amount->CurrentValue)))
+			$this->dep_amount->CurrentValue = ConvertToFloatString($this->dep_amount->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->dep_ytd->FormValue == $this->dep_ytd->CurrentValue && is_numeric(ConvertToFloatString($this->dep_ytd->CurrentValue)))
+			$this->dep_ytd->CurrentValue = ConvertToFloatString($this->dep_ytd->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->nb_val->FormValue == $this->nb_val->CurrentValue && is_numeric(ConvertToFloatString($this->nb_val->CurrentValue)))
+			$this->nb_val->CurrentValue = ConvertToFloatString($this->nb_val->CurrentValue);
+
+		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
 		// id
-		// datetime
-		// script
-		// user
-		// action
-		// table
-		// field
-		// keyvalue
-		// oldvalue
-		// newvalue
+		// hohead_id
+		// asset_id
+		// proc_date
+		// proc_ccost
+		// dep_amount
+		// dep_ytd
+		// nb_val
+		// remarks
 
 		if ($this->RowType == ROWTYPE_VIEW) { // View row
 
@@ -1090,205 +1099,186 @@ class t204_audittrail_edit extends t204_audittrail
 			$this->id->ViewValue = $this->id->CurrentValue;
 			$this->id->ViewCustomAttributes = "";
 
-			// datetime
-			$this->datetime->ViewValue = $this->datetime->CurrentValue;
-			$this->datetime->ViewValue = FormatDateTime($this->datetime->ViewValue, 0);
-			$this->datetime->ViewCustomAttributes = "";
+			// hohead_id
+			$this->hohead_id->ViewValue = $this->hohead_id->CurrentValue;
+			$this->hohead_id->ViewValue = FormatNumber($this->hohead_id->ViewValue, 0, -2, -2, -2);
+			$this->hohead_id->ViewCustomAttributes = "";
 
-			// script
-			$this->script->ViewValue = $this->script->CurrentValue;
-			$this->script->ViewCustomAttributes = "";
+			// asset_id
+			$this->asset_id->ViewValue = $this->asset_id->CurrentValue;
+			$this->asset_id->ViewValue = FormatNumber($this->asset_id->ViewValue, 0, -2, -2, -2);
+			$this->asset_id->ViewCustomAttributes = "";
 
-			// user
-			$this->user->ViewValue = $this->user->CurrentValue;
-			$this->user->ViewCustomAttributes = "";
+			// proc_date
+			$this->proc_date->ViewValue = $this->proc_date->CurrentValue;
+			$this->proc_date->ViewValue = FormatDateTime($this->proc_date->ViewValue, 0);
+			$this->proc_date->ViewCustomAttributes = "";
 
-			// action
-			$this->_action->ViewValue = $this->_action->CurrentValue;
-			$this->_action->ViewCustomAttributes = "";
+			// proc_ccost
+			$this->proc_ccost->ViewValue = $this->proc_ccost->CurrentValue;
+			$this->proc_ccost->ViewValue = FormatNumber($this->proc_ccost->ViewValue, 2, -2, -2, -2);
+			$this->proc_ccost->ViewCustomAttributes = "";
 
-			// table
-			$this->_table->ViewValue = $this->_table->CurrentValue;
-			$this->_table->ViewCustomAttributes = "";
+			// dep_amount
+			$this->dep_amount->ViewValue = $this->dep_amount->CurrentValue;
+			$this->dep_amount->ViewValue = FormatNumber($this->dep_amount->ViewValue, 2, -2, -2, -2);
+			$this->dep_amount->ViewCustomAttributes = "";
 
-			// field
-			$this->field->ViewValue = $this->field->CurrentValue;
-			$this->field->ViewCustomAttributes = "";
+			// dep_ytd
+			$this->dep_ytd->ViewValue = $this->dep_ytd->CurrentValue;
+			$this->dep_ytd->ViewValue = FormatNumber($this->dep_ytd->ViewValue, 2, -2, -2, -2);
+			$this->dep_ytd->ViewCustomAttributes = "";
 
-			// keyvalue
-			$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
-			$this->keyvalue->ViewCustomAttributes = "";
+			// nb_val
+			$this->nb_val->ViewValue = $this->nb_val->CurrentValue;
+			$this->nb_val->ViewValue = FormatNumber($this->nb_val->ViewValue, 2, -2, -2, -2);
+			$this->nb_val->ViewCustomAttributes = "";
 
-			// oldvalue
-			$this->oldvalue->ViewValue = $this->oldvalue->CurrentValue;
-			$this->oldvalue->ViewCustomAttributes = "";
+			// remarks
+			$this->remarks->ViewValue = $this->remarks->CurrentValue;
+			$this->remarks->ViewCustomAttributes = "";
 
-			// newvalue
-			$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
-			$this->newvalue->ViewCustomAttributes = "";
+			// hohead_id
+			$this->hohead_id->LinkCustomAttributes = "";
+			$this->hohead_id->HrefValue = "";
+			$this->hohead_id->TooltipValue = "";
 
-			// id
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
-			$this->id->TooltipValue = "";
+			// asset_id
+			$this->asset_id->LinkCustomAttributes = "";
+			$this->asset_id->HrefValue = "";
+			$this->asset_id->TooltipValue = "";
 
-			// datetime
-			$this->datetime->LinkCustomAttributes = "";
-			$this->datetime->HrefValue = "";
-			$this->datetime->TooltipValue = "";
+			// proc_date
+			$this->proc_date->LinkCustomAttributes = "";
+			$this->proc_date->HrefValue = "";
+			$this->proc_date->TooltipValue = "";
 
-			// script
-			$this->script->LinkCustomAttributes = "";
-			$this->script->HrefValue = "";
-			$this->script->TooltipValue = "";
+			// proc_ccost
+			$this->proc_ccost->LinkCustomAttributes = "";
+			$this->proc_ccost->HrefValue = "";
+			$this->proc_ccost->TooltipValue = "";
 
-			// user
-			$this->user->LinkCustomAttributes = "";
-			$this->user->HrefValue = "";
-			$this->user->TooltipValue = "";
+			// dep_amount
+			$this->dep_amount->LinkCustomAttributes = "";
+			$this->dep_amount->HrefValue = "";
+			$this->dep_amount->TooltipValue = "";
 
-			// action
-			$this->_action->LinkCustomAttributes = "";
-			$this->_action->HrefValue = "";
-			$this->_action->TooltipValue = "";
+			// dep_ytd
+			$this->dep_ytd->LinkCustomAttributes = "";
+			$this->dep_ytd->HrefValue = "";
+			$this->dep_ytd->TooltipValue = "";
 
-			// table
-			$this->_table->LinkCustomAttributes = "";
-			$this->_table->HrefValue = "";
-			$this->_table->TooltipValue = "";
+			// nb_val
+			$this->nb_val->LinkCustomAttributes = "";
+			$this->nb_val->HrefValue = "";
+			$this->nb_val->TooltipValue = "";
 
-			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
-			$this->field->TooltipValue = "";
-
-			// keyvalue
-			$this->keyvalue->LinkCustomAttributes = "";
-			$this->keyvalue->HrefValue = "";
-			$this->keyvalue->TooltipValue = "";
-
-			// oldvalue
-			$this->oldvalue->LinkCustomAttributes = "";
-			$this->oldvalue->HrefValue = "";
-			$this->oldvalue->TooltipValue = "";
-
-			// newvalue
-			$this->newvalue->LinkCustomAttributes = "";
-			$this->newvalue->HrefValue = "";
-			$this->newvalue->TooltipValue = "";
+			// remarks
+			$this->remarks->LinkCustomAttributes = "";
+			$this->remarks->HrefValue = "";
+			$this->remarks->TooltipValue = "";
 		} elseif ($this->RowType == ROWTYPE_EDIT) { // Edit row
 
-			// id
-			$this->id->EditAttrs["class"] = "form-control";
-			$this->id->EditCustomAttributes = "";
-			$this->id->EditValue = $this->id->CurrentValue;
-			$this->id->ViewCustomAttributes = "";
+			// hohead_id
+			$this->hohead_id->EditAttrs["class"] = "form-control";
+			$this->hohead_id->EditCustomAttributes = "";
+			if ($this->hohead_id->getSessionValue() != "") {
+				$this->hohead_id->CurrentValue = $this->hohead_id->getSessionValue();
+				$this->hohead_id->ViewValue = $this->hohead_id->CurrentValue;
+				$this->hohead_id->ViewValue = FormatNumber($this->hohead_id->ViewValue, 0, -2, -2, -2);
+				$this->hohead_id->ViewCustomAttributes = "";
+			} else {
+				$this->hohead_id->EditValue = HtmlEncode($this->hohead_id->CurrentValue);
+				$this->hohead_id->PlaceHolder = RemoveHtml($this->hohead_id->caption());
+			}
 
-			// datetime
-			$this->datetime->EditAttrs["class"] = "form-control";
-			$this->datetime->EditCustomAttributes = "";
-			$this->datetime->EditValue = HtmlEncode(FormatDateTime($this->datetime->CurrentValue, 8));
-			$this->datetime->PlaceHolder = RemoveHtml($this->datetime->caption());
+			// asset_id
+			$this->asset_id->EditAttrs["class"] = "form-control";
+			$this->asset_id->EditCustomAttributes = "";
+			$this->asset_id->EditValue = HtmlEncode($this->asset_id->CurrentValue);
+			$this->asset_id->PlaceHolder = RemoveHtml($this->asset_id->caption());
 
-			// script
-			$this->script->EditAttrs["class"] = "form-control";
-			$this->script->EditCustomAttributes = "";
-			if (!$this->script->Raw)
-				$this->script->CurrentValue = HtmlDecode($this->script->CurrentValue);
-			$this->script->EditValue = HtmlEncode($this->script->CurrentValue);
-			$this->script->PlaceHolder = RemoveHtml($this->script->caption());
+			// proc_date
+			$this->proc_date->EditAttrs["class"] = "form-control";
+			$this->proc_date->EditCustomAttributes = "";
+			$this->proc_date->EditValue = HtmlEncode(FormatDateTime($this->proc_date->CurrentValue, 8));
+			$this->proc_date->PlaceHolder = RemoveHtml($this->proc_date->caption());
 
-			// user
-			$this->user->EditAttrs["class"] = "form-control";
-			$this->user->EditCustomAttributes = "";
-			if (!$this->user->Raw)
-				$this->user->CurrentValue = HtmlDecode($this->user->CurrentValue);
-			$this->user->EditValue = HtmlEncode($this->user->CurrentValue);
-			$this->user->PlaceHolder = RemoveHtml($this->user->caption());
+			// proc_ccost
+			$this->proc_ccost->EditAttrs["class"] = "form-control";
+			$this->proc_ccost->EditCustomAttributes = "";
+			$this->proc_ccost->EditValue = HtmlEncode($this->proc_ccost->CurrentValue);
+			$this->proc_ccost->PlaceHolder = RemoveHtml($this->proc_ccost->caption());
+			if (strval($this->proc_ccost->EditValue) != "" && is_numeric($this->proc_ccost->EditValue))
+				$this->proc_ccost->EditValue = FormatNumber($this->proc_ccost->EditValue, -2, -2, -2, -2);
+			
 
-			// action
-			$this->_action->EditAttrs["class"] = "form-control";
-			$this->_action->EditCustomAttributes = "";
-			if (!$this->_action->Raw)
-				$this->_action->CurrentValue = HtmlDecode($this->_action->CurrentValue);
-			$this->_action->EditValue = HtmlEncode($this->_action->CurrentValue);
-			$this->_action->PlaceHolder = RemoveHtml($this->_action->caption());
+			// dep_amount
+			$this->dep_amount->EditAttrs["class"] = "form-control";
+			$this->dep_amount->EditCustomAttributes = "";
+			$this->dep_amount->EditValue = HtmlEncode($this->dep_amount->CurrentValue);
+			$this->dep_amount->PlaceHolder = RemoveHtml($this->dep_amount->caption());
+			if (strval($this->dep_amount->EditValue) != "" && is_numeric($this->dep_amount->EditValue))
+				$this->dep_amount->EditValue = FormatNumber($this->dep_amount->EditValue, -2, -2, -2, -2);
+			
 
-			// table
-			$this->_table->EditAttrs["class"] = "form-control";
-			$this->_table->EditCustomAttributes = "";
-			if (!$this->_table->Raw)
-				$this->_table->CurrentValue = HtmlDecode($this->_table->CurrentValue);
-			$this->_table->EditValue = HtmlEncode($this->_table->CurrentValue);
-			$this->_table->PlaceHolder = RemoveHtml($this->_table->caption());
+			// dep_ytd
+			$this->dep_ytd->EditAttrs["class"] = "form-control";
+			$this->dep_ytd->EditCustomAttributes = "";
+			$this->dep_ytd->EditValue = HtmlEncode($this->dep_ytd->CurrentValue);
+			$this->dep_ytd->PlaceHolder = RemoveHtml($this->dep_ytd->caption());
+			if (strval($this->dep_ytd->EditValue) != "" && is_numeric($this->dep_ytd->EditValue))
+				$this->dep_ytd->EditValue = FormatNumber($this->dep_ytd->EditValue, -2, -2, -2, -2);
+			
 
-			// field
-			$this->field->EditAttrs["class"] = "form-control";
-			$this->field->EditCustomAttributes = "";
-			if (!$this->field->Raw)
-				$this->field->CurrentValue = HtmlDecode($this->field->CurrentValue);
-			$this->field->EditValue = HtmlEncode($this->field->CurrentValue);
-			$this->field->PlaceHolder = RemoveHtml($this->field->caption());
+			// nb_val
+			$this->nb_val->EditAttrs["class"] = "form-control";
+			$this->nb_val->EditCustomAttributes = "";
+			$this->nb_val->EditValue = HtmlEncode($this->nb_val->CurrentValue);
+			$this->nb_val->PlaceHolder = RemoveHtml($this->nb_val->caption());
+			if (strval($this->nb_val->EditValue) != "" && is_numeric($this->nb_val->EditValue))
+				$this->nb_val->EditValue = FormatNumber($this->nb_val->EditValue, -2, -2, -2, -2);
+			
 
-			// keyvalue
-			$this->keyvalue->EditAttrs["class"] = "form-control";
-			$this->keyvalue->EditCustomAttributes = "";
-			$this->keyvalue->EditValue = HtmlEncode($this->keyvalue->CurrentValue);
-			$this->keyvalue->PlaceHolder = RemoveHtml($this->keyvalue->caption());
-
-			// oldvalue
-			$this->oldvalue->EditAttrs["class"] = "form-control";
-			$this->oldvalue->EditCustomAttributes = "";
-			$this->oldvalue->EditValue = HtmlEncode($this->oldvalue->CurrentValue);
-			$this->oldvalue->PlaceHolder = RemoveHtml($this->oldvalue->caption());
-
-			// newvalue
-			$this->newvalue->EditAttrs["class"] = "form-control";
-			$this->newvalue->EditCustomAttributes = "";
-			$this->newvalue->EditValue = HtmlEncode($this->newvalue->CurrentValue);
-			$this->newvalue->PlaceHolder = RemoveHtml($this->newvalue->caption());
+			// remarks
+			$this->remarks->EditAttrs["class"] = "form-control";
+			$this->remarks->EditCustomAttributes = "";
+			$this->remarks->EditValue = HtmlEncode($this->remarks->CurrentValue);
+			$this->remarks->PlaceHolder = RemoveHtml($this->remarks->caption());
 
 			// Edit refer script
-			// id
+			// hohead_id
 
-			$this->id->LinkCustomAttributes = "";
-			$this->id->HrefValue = "";
+			$this->hohead_id->LinkCustomAttributes = "";
+			$this->hohead_id->HrefValue = "";
 
-			// datetime
-			$this->datetime->LinkCustomAttributes = "";
-			$this->datetime->HrefValue = "";
+			// asset_id
+			$this->asset_id->LinkCustomAttributes = "";
+			$this->asset_id->HrefValue = "";
 
-			// script
-			$this->script->LinkCustomAttributes = "";
-			$this->script->HrefValue = "";
+			// proc_date
+			$this->proc_date->LinkCustomAttributes = "";
+			$this->proc_date->HrefValue = "";
 
-			// user
-			$this->user->LinkCustomAttributes = "";
-			$this->user->HrefValue = "";
+			// proc_ccost
+			$this->proc_ccost->LinkCustomAttributes = "";
+			$this->proc_ccost->HrefValue = "";
 
-			// action
-			$this->_action->LinkCustomAttributes = "";
-			$this->_action->HrefValue = "";
+			// dep_amount
+			$this->dep_amount->LinkCustomAttributes = "";
+			$this->dep_amount->HrefValue = "";
 
-			// table
-			$this->_table->LinkCustomAttributes = "";
-			$this->_table->HrefValue = "";
+			// dep_ytd
+			$this->dep_ytd->LinkCustomAttributes = "";
+			$this->dep_ytd->HrefValue = "";
 
-			// field
-			$this->field->LinkCustomAttributes = "";
-			$this->field->HrefValue = "";
+			// nb_val
+			$this->nb_val->LinkCustomAttributes = "";
+			$this->nb_val->HrefValue = "";
 
-			// keyvalue
-			$this->keyvalue->LinkCustomAttributes = "";
-			$this->keyvalue->HrefValue = "";
-
-			// oldvalue
-			$this->oldvalue->LinkCustomAttributes = "";
-			$this->oldvalue->HrefValue = "";
-
-			// newvalue
-			$this->newvalue->LinkCustomAttributes = "";
-			$this->newvalue->HrefValue = "";
+			// remarks
+			$this->remarks->LinkCustomAttributes = "";
+			$this->remarks->HrefValue = "";
 		}
 		if ($this->RowType == ROWTYPE_ADD || $this->RowType == ROWTYPE_EDIT || $this->RowType == ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->setupFieldTitles();
@@ -1309,57 +1299,65 @@ class t204_audittrail_edit extends t204_audittrail
 		// Check if validation required
 		if (!Config("SERVER_VALIDATE"))
 			return ($FormError == "");
-		if ($this->id->Required) {
-			if (!$this->id->IsDetailKey && $this->id->FormValue != NULL && $this->id->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->id->caption(), $this->id->RequiredErrorMessage));
+		if ($this->hohead_id->Required) {
+			if (!$this->hohead_id->IsDetailKey && $this->hohead_id->FormValue != NULL && $this->hohead_id->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->hohead_id->caption(), $this->hohead_id->RequiredErrorMessage));
 			}
 		}
-		if ($this->datetime->Required) {
-			if (!$this->datetime->IsDetailKey && $this->datetime->FormValue != NULL && $this->datetime->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->datetime->caption(), $this->datetime->RequiredErrorMessage));
+		if (!CheckInteger($this->hohead_id->FormValue)) {
+			AddMessage($FormError, $this->hohead_id->errorMessage());
+		}
+		if ($this->asset_id->Required) {
+			if (!$this->asset_id->IsDetailKey && $this->asset_id->FormValue != NULL && $this->asset_id->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->asset_id->caption(), $this->asset_id->RequiredErrorMessage));
 			}
 		}
-		if (!CheckDate($this->datetime->FormValue)) {
-			AddMessage($FormError, $this->datetime->errorMessage());
+		if (!CheckInteger($this->asset_id->FormValue)) {
+			AddMessage($FormError, $this->asset_id->errorMessage());
 		}
-		if ($this->script->Required) {
-			if (!$this->script->IsDetailKey && $this->script->FormValue != NULL && $this->script->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->script->caption(), $this->script->RequiredErrorMessage));
+		if ($this->proc_date->Required) {
+			if (!$this->proc_date->IsDetailKey && $this->proc_date->FormValue != NULL && $this->proc_date->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->proc_date->caption(), $this->proc_date->RequiredErrorMessage));
 			}
 		}
-		if ($this->user->Required) {
-			if (!$this->user->IsDetailKey && $this->user->FormValue != NULL && $this->user->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->user->caption(), $this->user->RequiredErrorMessage));
+		if (!CheckDate($this->proc_date->FormValue)) {
+			AddMessage($FormError, $this->proc_date->errorMessage());
+		}
+		if ($this->proc_ccost->Required) {
+			if (!$this->proc_ccost->IsDetailKey && $this->proc_ccost->FormValue != NULL && $this->proc_ccost->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->proc_ccost->caption(), $this->proc_ccost->RequiredErrorMessage));
 			}
 		}
-		if ($this->_action->Required) {
-			if (!$this->_action->IsDetailKey && $this->_action->FormValue != NULL && $this->_action->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->_action->caption(), $this->_action->RequiredErrorMessage));
+		if (!CheckNumber($this->proc_ccost->FormValue)) {
+			AddMessage($FormError, $this->proc_ccost->errorMessage());
+		}
+		if ($this->dep_amount->Required) {
+			if (!$this->dep_amount->IsDetailKey && $this->dep_amount->FormValue != NULL && $this->dep_amount->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->dep_amount->caption(), $this->dep_amount->RequiredErrorMessage));
 			}
 		}
-		if ($this->_table->Required) {
-			if (!$this->_table->IsDetailKey && $this->_table->FormValue != NULL && $this->_table->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->_table->caption(), $this->_table->RequiredErrorMessage));
+		if (!CheckNumber($this->dep_amount->FormValue)) {
+			AddMessage($FormError, $this->dep_amount->errorMessage());
+		}
+		if ($this->dep_ytd->Required) {
+			if (!$this->dep_ytd->IsDetailKey && $this->dep_ytd->FormValue != NULL && $this->dep_ytd->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->dep_ytd->caption(), $this->dep_ytd->RequiredErrorMessage));
 			}
 		}
-		if ($this->field->Required) {
-			if (!$this->field->IsDetailKey && $this->field->FormValue != NULL && $this->field->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->field->caption(), $this->field->RequiredErrorMessage));
+		if (!CheckNumber($this->dep_ytd->FormValue)) {
+			AddMessage($FormError, $this->dep_ytd->errorMessage());
+		}
+		if ($this->nb_val->Required) {
+			if (!$this->nb_val->IsDetailKey && $this->nb_val->FormValue != NULL && $this->nb_val->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->nb_val->caption(), $this->nb_val->RequiredErrorMessage));
 			}
 		}
-		if ($this->keyvalue->Required) {
-			if (!$this->keyvalue->IsDetailKey && $this->keyvalue->FormValue != NULL && $this->keyvalue->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->keyvalue->caption(), $this->keyvalue->RequiredErrorMessage));
-			}
+		if (!CheckNumber($this->nb_val->FormValue)) {
+			AddMessage($FormError, $this->nb_val->errorMessage());
 		}
-		if ($this->oldvalue->Required) {
-			if (!$this->oldvalue->IsDetailKey && $this->oldvalue->FormValue != NULL && $this->oldvalue->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->oldvalue->caption(), $this->oldvalue->RequiredErrorMessage));
-			}
-		}
-		if ($this->newvalue->Required) {
-			if (!$this->newvalue->IsDetailKey && $this->newvalue->FormValue != NULL && $this->newvalue->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->newvalue->caption(), $this->newvalue->RequiredErrorMessage));
+		if ($this->remarks->Required) {
+			if (!$this->remarks->IsDetailKey && $this->remarks->FormValue != NULL && $this->remarks->FormValue == "") {
+				AddMessage($FormError, str_replace("%s", $this->remarks->caption(), $this->remarks->RequiredErrorMessage));
 			}
 		}
 
@@ -1399,32 +1397,52 @@ class t204_audittrail_edit extends t204_audittrail
 			$this->loadDbValues($rsold);
 			$rsnew = [];
 
-			// datetime
-			$this->datetime->setDbValueDef($rsnew, UnFormatDateTime($this->datetime->CurrentValue, 0), CurrentDate(), $this->datetime->ReadOnly);
+			// hohead_id
+			$this->hohead_id->setDbValueDef($rsnew, $this->hohead_id->CurrentValue, 0, $this->hohead_id->ReadOnly);
 
-			// script
-			$this->script->setDbValueDef($rsnew, $this->script->CurrentValue, NULL, $this->script->ReadOnly);
+			// asset_id
+			$this->asset_id->setDbValueDef($rsnew, $this->asset_id->CurrentValue, 0, $this->asset_id->ReadOnly);
 
-			// user
-			$this->user->setDbValueDef($rsnew, $this->user->CurrentValue, NULL, $this->user->ReadOnly);
+			// proc_date
+			$this->proc_date->setDbValueDef($rsnew, UnFormatDateTime($this->proc_date->CurrentValue, 0), CurrentDate(), $this->proc_date->ReadOnly);
 
-			// action
-			$this->_action->setDbValueDef($rsnew, $this->_action->CurrentValue, NULL, $this->_action->ReadOnly);
+			// proc_ccost
+			$this->proc_ccost->setDbValueDef($rsnew, $this->proc_ccost->CurrentValue, 0, $this->proc_ccost->ReadOnly);
 
-			// table
-			$this->_table->setDbValueDef($rsnew, $this->_table->CurrentValue, NULL, $this->_table->ReadOnly);
+			// dep_amount
+			$this->dep_amount->setDbValueDef($rsnew, $this->dep_amount->CurrentValue, 0, $this->dep_amount->ReadOnly);
 
-			// field
-			$this->field->setDbValueDef($rsnew, $this->field->CurrentValue, NULL, $this->field->ReadOnly);
+			// dep_ytd
+			$this->dep_ytd->setDbValueDef($rsnew, $this->dep_ytd->CurrentValue, 0, $this->dep_ytd->ReadOnly);
 
-			// keyvalue
-			$this->keyvalue->setDbValueDef($rsnew, $this->keyvalue->CurrentValue, NULL, $this->keyvalue->ReadOnly);
+			// nb_val
+			$this->nb_val->setDbValueDef($rsnew, $this->nb_val->CurrentValue, 0, $this->nb_val->ReadOnly);
 
-			// oldvalue
-			$this->oldvalue->setDbValueDef($rsnew, $this->oldvalue->CurrentValue, NULL, $this->oldvalue->ReadOnly);
+			// remarks
+			$this->remarks->setDbValueDef($rsnew, $this->remarks->CurrentValue, NULL, $this->remarks->ReadOnly);
 
-			// newvalue
-			$this->newvalue->setDbValueDef($rsnew, $this->newvalue->CurrentValue, NULL, $this->newvalue->ReadOnly);
+			// Check referential integrity for master table 't101_ho_head'
+			$validMasterRecord = TRUE;
+			$masterFilter = $this->sqlMasterFilter_t101_ho_head();
+			$keyValue = isset($rsnew['hohead_id']) ? $rsnew['hohead_id'] : $rsold['hohead_id'];
+			if (strval($keyValue) != "") {
+				$masterFilter = str_replace("@id@", AdjustSql($keyValue), $masterFilter);
+			} else {
+				$validMasterRecord = FALSE;
+			}
+			if ($validMasterRecord) {
+				if (!isset($GLOBALS["t101_ho_head"]))
+					$GLOBALS["t101_ho_head"] = new t101_ho_head();
+				$rsmaster = $GLOBALS["t101_ho_head"]->loadRs($masterFilter);
+				$validMasterRecord = ($rsmaster && !$rsmaster->EOF);
+				$rsmaster->close();
+			}
+			if (!$validMasterRecord) {
+				$relatedRecordMsg = str_replace("%t", "t101_ho_head", $Language->phrase("RelatedRecordRequired"));
+				$this->setFailureMessage($relatedRecordMsg);
+				$rs->close();
+				return FALSE;
+			}
 
 			// Call Row Updating event
 			$updateRow = $this->Row_Updating($rsold, $rsnew);
@@ -1482,13 +1500,80 @@ class t204_audittrail_edit extends t204_audittrail
 		return $editRow;
 	}
 
+	// Set up master/detail based on QueryString
+	protected function setupMasterParms()
+	{
+		$validMaster = FALSE;
+
+		// Get the keys for master table
+		if (($master = Get(Config("TABLE_SHOW_MASTER")) ?: Get(Config("TABLE_MASTER"))) !== NULL) {
+			$masterTblVar = $master;
+			if ($masterTblVar == "") {
+				$validMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($masterTblVar == "t101_ho_head") {
+				$validMaster = TRUE;
+				if (($parm = Get("fk_id") ?: Get("hohead_id")) !== NULL) {
+					$GLOBALS["t101_ho_head"]->id->setQueryStringValue($parm);
+					$this->hohead_id->setQueryStringValue($GLOBALS["t101_ho_head"]->id->QueryStringValue);
+					$this->hohead_id->setSessionValue($this->hohead_id->QueryStringValue);
+					if (!is_numeric($GLOBALS["t101_ho_head"]->id->QueryStringValue))
+						$validMaster = FALSE;
+				} else {
+					$validMaster = FALSE;
+				}
+			}
+		} elseif (($master = Post(Config("TABLE_SHOW_MASTER")) ?: Post(Config("TABLE_MASTER"))) !== NULL) {
+			$masterTblVar = $master;
+			if ($masterTblVar == "") {
+				$validMaster = TRUE;
+				$this->DbMasterFilter = "";
+				$this->DbDetailFilter = "";
+			}
+			if ($masterTblVar == "t101_ho_head") {
+				$validMaster = TRUE;
+				if (($parm = Post("fk_id") ?: Post("hohead_id")) !== NULL) {
+					$GLOBALS["t101_ho_head"]->id->setFormValue($parm);
+					$this->hohead_id->setFormValue($GLOBALS["t101_ho_head"]->id->FormValue);
+					$this->hohead_id->setSessionValue($this->hohead_id->FormValue);
+					if (!is_numeric($GLOBALS["t101_ho_head"]->id->FormValue))
+						$validMaster = FALSE;
+				} else {
+					$validMaster = FALSE;
+				}
+			}
+		}
+		if ($validMaster) {
+
+			// Save current master table
+			$this->setCurrentMasterTable($masterTblVar);
+			$this->setSessionWhere($this->getDetailFilter());
+
+			// Reset start record counter (new master key)
+			if (!$this->isAddOrEdit()) {
+				$this->StartRecord = 1;
+				$this->setStartRecordNumber($this->StartRecord);
+			}
+
+			// Clear previous master key from Session
+			if ($masterTblVar != "t101_ho_head") {
+				if ($this->hohead_id->CurrentValue == "")
+					$this->hohead_id->setSessionValue("");
+			}
+		}
+		$this->DbMasterFilter = $this->getMasterFilter(); // Get master filter
+		$this->DbDetailFilter = $this->getDetailFilter(); // Get detail filter
+	}
+
 	// Set up Breadcrumb
 	protected function setupBreadcrumb()
 	{
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new Breadcrumb();
 		$url = substr(CurrentUrl(), strrpos(CurrentUrl(), "/")+1);
-		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t204_audittraillist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t102_ho_detaillist.php"), "", $this->TableVar, TRUE);
 		$pageId = "edit";
 		$Breadcrumb->add("edit", $pageId, $url);
 	}

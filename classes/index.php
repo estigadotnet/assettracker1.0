@@ -295,8 +295,12 @@ class index
 			$this->terminate("t003_signaturelist.php");
 		if ($Security->allowList(CurrentProjectID() . 't004_asset'))
 			$this->terminate("t004_assetlist.php");
+		if ($Security->allowList(CurrentProjectID() . 't101_ho_head'))
+			$this->terminate("t101_ho_headlist.php");
 		if ($Security->allowList(CurrentProjectID() . 't101_opname'))
 			$this->terminate("t101_opnamelist.php");
+		if ($Security->allowList(CurrentProjectID() . 't102_ho_detail'))
+			$this->terminate("t102_ho_detaillist.php");
 		if ($Security->allowList(CurrentProjectID() . 't201_users'))
 			$this->terminate("t201_userslist.php");
 		if ($Security->allowList(CurrentProjectID() . 't202_userlevels'))

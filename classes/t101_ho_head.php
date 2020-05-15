@@ -2,9 +2,9 @@
 <?php
 
 /**
- * Table class for t204_audittrail
+ * Table class for t101_ho_head
  */
-class t204_audittrail extends DbTable
+class t101_ho_head extends DbTable
 {
 	protected $SqlFrom = "";
 	protected $SqlSelect = "";
@@ -34,15 +34,18 @@ class t204_audittrail extends DbTable
 
 	// Fields
 	public $id;
-	public $datetime;
-	public $script;
-	public $user;
-	public $_action;
-	public $_table;
-	public $field;
-	public $keyvalue;
-	public $oldvalue;
-	public $newvalue;
+	public $tr_no;
+	public $tr_date;
+	public $ho_to;
+	public $cno_to;
+	public $dept_to;
+	public $ho_by;
+	public $cno_by;
+	public $dept_by;
+	public $sign1;
+	public $sign2;
+	public $sign3;
+	public $sign4;
 
 	// Constructor
 	public function __construct()
@@ -53,12 +56,12 @@ class t204_audittrail extends DbTable
 		// Language object
 		if (!isset($Language))
 			$Language = new Language();
-		$this->TableVar = 't204_audittrail';
-		$this->TableName = 't204_audittrail';
+		$this->TableVar = 't101_ho_head';
+		$this->TableName = 't101_ho_head';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t204_audittrail`";
+		$this->UpdateTable = "`t101_ho_head`";
 		$this->Dbid = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -79,60 +82,131 @@ class t204_audittrail extends DbTable
 		$this->BasicSearch = new BasicSearch($this->TableVar);
 
 		// id
-		$this->id = new DbField('t204_audittrail', 't204_audittrail', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new DbField('t101_ho_head', 't101_ho_head', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->IsAutoIncrement = TRUE; // Autoincrement field
 		$this->id->IsPrimaryKey = TRUE; // Primary key field
+		$this->id->IsForeignKey = TRUE; // Foreign key field
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// datetime
-		$this->datetime = new DbField('t204_audittrail', 't204_audittrail', 'x_datetime', 'datetime', '`datetime`', CastDateFieldForLike("`datetime`", 0, "DB"), 135, 19, 0, FALSE, '`datetime`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->datetime->Nullable = FALSE; // NOT NULL field
-		$this->datetime->Required = TRUE; // Required field
-		$this->datetime->Sortable = TRUE; // Allow sort
-		$this->datetime->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
-		$this->fields['datetime'] = &$this->datetime;
+		// tr_no
+		$this->tr_no = new DbField('t101_ho_head', 't101_ho_head', 'x_tr_no', 'tr_no', '`tr_no`', '`tr_no`', 200, 25, -1, FALSE, '`tr_no`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->tr_no->Nullable = FALSE; // NOT NULL field
+		$this->tr_no->Required = TRUE; // Required field
+		$this->tr_no->Sortable = TRUE; // Allow sort
+		$this->fields['tr_no'] = &$this->tr_no;
 
-		// script
-		$this->script = new DbField('t204_audittrail', 't204_audittrail', 'x_script', 'script', '`script`', '`script`', 200, 80, -1, FALSE, '`script`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->script->Sortable = TRUE; // Allow sort
-		$this->fields['script'] = &$this->script;
+		// tr_date
+		$this->tr_date = new DbField('t101_ho_head', 't101_ho_head', 'x_tr_date', 'tr_date', '`tr_date`', CastDateFieldForLike("`tr_date`", 7, "DB"), 133, 10, 7, FALSE, '`tr_date`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->tr_date->Nullable = FALSE; // NOT NULL field
+		$this->tr_date->Required = TRUE; // Required field
+		$this->tr_date->Sortable = TRUE; // Allow sort
+		$this->tr_date->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_SEPARATOR"], $Language->phrase("IncorrectDateDMY"));
+		$this->fields['tr_date'] = &$this->tr_date;
 
-		// user
-		$this->user = new DbField('t204_audittrail', 't204_audittrail', 'x_user', 'user', '`user`', '`user`', 200, 80, -1, FALSE, '`user`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->user->Sortable = TRUE; // Allow sort
-		$this->fields['user'] = &$this->user;
+		// ho_to
+		$this->ho_to = new DbField('t101_ho_head', 't101_ho_head', 'x_ho_to', 'ho_to', '`ho_to`', '`ho_to`', 3, 11, -1, FALSE, '`ho_to`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->ho_to->Nullable = FALSE; // NOT NULL field
+		$this->ho_to->Required = TRUE; // Required field
+		$this->ho_to->Sortable = TRUE; // Allow sort
+		$this->ho_to->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->ho_to->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->ho_to->Lookup = new Lookup('ho_to', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->ho_to->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['ho_to'] = &$this->ho_to;
 
-		// action
-		$this->_action = new DbField('t204_audittrail', 't204_audittrail', 'x__action', 'action', '`action`', '`action`', 200, 80, -1, FALSE, '`action`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_action->Sortable = TRUE; // Allow sort
-		$this->fields['action'] = &$this->_action;
+		// cno_to
+		$this->cno_to = new DbField('t101_ho_head', 't101_ho_head', 'x_cno_to', 'cno_to', '`cno_to`', '`cno_to`', 200, 25, -1, FALSE, '`cno_to`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->cno_to->Nullable = FALSE; // NOT NULL field
+		$this->cno_to->Required = TRUE; // Required field
+		$this->cno_to->Sortable = TRUE; // Allow sort
+		$this->fields['cno_to'] = &$this->cno_to;
 
-		// table
-		$this->_table = new DbField('t204_audittrail', 't204_audittrail', 'x__table', 'table', '`table`', '`table`', 200, 80, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_table->Sortable = TRUE; // Allow sort
-		$this->fields['table'] = &$this->_table;
+		// dept_to
+		$this->dept_to = new DbField('t101_ho_head', 't101_ho_head', 'x_dept_to', 'dept_to', '`dept_to`', '`dept_to`', 3, 11, -1, FALSE, '`dept_to`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->dept_to->Nullable = FALSE; // NOT NULL field
+		$this->dept_to->Required = TRUE; // Required field
+		$this->dept_to->Sortable = TRUE; // Allow sort
+		$this->dept_to->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->dept_to->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->dept_to->Lookup = new Lookup('dept_to', 't002_location', FALSE, 'id', ["Location","","",""], [], [], [], [], [], [], '', '');
+		$this->dept_to->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['dept_to'] = &$this->dept_to;
 
-		// field
-		$this->field = new DbField('t204_audittrail', 't204_audittrail', 'x_field', 'field', '`field`', '`field`', 200, 80, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field->Sortable = TRUE; // Allow sort
-		$this->fields['field'] = &$this->field;
+		// ho_by
+		$this->ho_by = new DbField('t101_ho_head', 't101_ho_head', 'x_ho_by', 'ho_by', '`ho_by`', '`ho_by`', 3, 11, -1, FALSE, '`ho_by`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->ho_by->Nullable = FALSE; // NOT NULL field
+		$this->ho_by->Required = TRUE; // Required field
+		$this->ho_by->Sortable = TRUE; // Allow sort
+		$this->ho_by->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->ho_by->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->ho_by->Lookup = new Lookup('ho_by', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->ho_by->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['ho_by'] = &$this->ho_by;
 
-		// keyvalue
-		$this->keyvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_keyvalue', 'keyvalue', '`keyvalue`', '`keyvalue`', 201, -1, -1, FALSE, '`keyvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->keyvalue->Sortable = TRUE; // Allow sort
-		$this->fields['keyvalue'] = &$this->keyvalue;
+		// cno_by
+		$this->cno_by = new DbField('t101_ho_head', 't101_ho_head', 'x_cno_by', 'cno_by', '`cno_by`', '`cno_by`', 3, 11, -1, FALSE, '`cno_by`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->cno_by->Nullable = FALSE; // NOT NULL field
+		$this->cno_by->Required = TRUE; // Required field
+		$this->cno_by->Sortable = TRUE; // Allow sort
+		$this->cno_by->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['cno_by'] = &$this->cno_by;
 
-		// oldvalue
-		$this->oldvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_oldvalue', 'oldvalue', '`oldvalue`', '`oldvalue`', 201, -1, -1, FALSE, '`oldvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->oldvalue->Sortable = TRUE; // Allow sort
-		$this->fields['oldvalue'] = &$this->oldvalue;
+		// dept_by
+		$this->dept_by = new DbField('t101_ho_head', 't101_ho_head', 'x_dept_by', 'dept_by', '`dept_by`', '`dept_by`', 3, 11, -1, FALSE, '`dept_by`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->dept_by->Nullable = FALSE; // NOT NULL field
+		$this->dept_by->Required = TRUE; // Required field
+		$this->dept_by->Sortable = TRUE; // Allow sort
+		$this->dept_by->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->dept_by->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->dept_by->Lookup = new Lookup('dept_by', 't002_location', FALSE, 'id', ["Location","","",""], [], [], [], [], [], [], '', '');
+		$this->dept_by->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['dept_by'] = &$this->dept_by;
 
-		// newvalue
-		$this->newvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_newvalue', 'newvalue', '`newvalue`', '`newvalue`', 201, -1, -1, FALSE, '`newvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->newvalue->Sortable = TRUE; // Allow sort
-		$this->fields['newvalue'] = &$this->newvalue;
+		// sign1
+		$this->sign1 = new DbField('t101_ho_head', 't101_ho_head', 'x_sign1', 'sign1', '`sign1`', '`sign1`', 3, 11, -1, FALSE, '`sign1`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->sign1->Nullable = FALSE; // NOT NULL field
+		$this->sign1->Required = TRUE; // Required field
+		$this->sign1->Sortable = TRUE; // Allow sort
+		$this->sign1->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->sign1->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->sign1->Lookup = new Lookup('sign1', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->sign1->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['sign1'] = &$this->sign1;
+
+		// sign2
+		$this->sign2 = new DbField('t101_ho_head', 't101_ho_head', 'x_sign2', 'sign2', '`sign2`', '`sign2`', 3, 11, -1, FALSE, '`sign2`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->sign2->Nullable = FALSE; // NOT NULL field
+		$this->sign2->Required = TRUE; // Required field
+		$this->sign2->Sortable = TRUE; // Allow sort
+		$this->sign2->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->sign2->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->sign2->Lookup = new Lookup('sign2', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->sign2->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['sign2'] = &$this->sign2;
+
+		// sign3
+		$this->sign3 = new DbField('t101_ho_head', 't101_ho_head', 'x_sign3', 'sign3', '`sign3`', '`sign3`', 3, 11, -1, FALSE, '`sign3`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->sign3->Nullable = FALSE; // NOT NULL field
+		$this->sign3->Required = TRUE; // Required field
+		$this->sign3->Sortable = TRUE; // Allow sort
+		$this->sign3->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->sign3->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->sign3->Lookup = new Lookup('sign3', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->sign3->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['sign3'] = &$this->sign3;
+
+		// sign4
+		$this->sign4 = new DbField('t101_ho_head', 't101_ho_head', 'x_sign4', 'sign4', '`sign4`', '`sign4`', 3, 11, -1, FALSE, '`sign4`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'SELECT');
+		$this->sign4->Nullable = FALSE; // NOT NULL field
+		$this->sign4->Required = TRUE; // Required field
+		$this->sign4->Sortable = TRUE; // Allow sort
+		$this->sign4->UsePleaseSelect = TRUE; // Use PleaseSelect by default
+		$this->sign4->PleaseSelectText = $Language->phrase("PleaseSelect"); // "PleaseSelect" text
+		$this->sign4->Lookup = new Lookup('sign4', 't003_signature', FALSE, 'id', ["Signature","","",""], [], [], [], [], [], [], '', '');
+		$this->sign4->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['sign4'] = &$this->sign4;
 	}
 
 	// Field Visibility
@@ -184,10 +258,35 @@ class t204_audittrail extends DbTable
 		}
 	}
 
+	// Current detail table name
+	public function getCurrentDetailTable()
+	{
+		return @$_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_DETAIL_TABLE")];
+	}
+	public function setCurrentDetailTable($v)
+	{
+		$_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_DETAIL_TABLE")] = $v;
+	}
+
+	// Get detail url
+	public function getDetailUrl()
+	{
+
+		// Detail url
+		$detailUrl = "";
+		if ($this->getCurrentDetailTable() == "t102_ho_detail") {
+			$detailUrl = $GLOBALS["t102_ho_detail"]->getListUrl() . "?" . Config("TABLE_SHOW_MASTER") . "=" . $this->TableVar;
+			$detailUrl .= "&fk_id=" . urlencode($this->id->CurrentValue);
+		}
+		if ($detailUrl == "")
+			$detailUrl = "t101_ho_headlist.php";
+		return $detailUrl;
+	}
+
 	// Table level SQL
 	public function getSqlFrom() // From
 	{
-		return ($this->SqlFrom != "") ? $this->SqlFrom : "`t204_audittrail`";
+		return ($this->SqlFrom != "") ? $this->SqlFrom : "`t101_ho_head`";
 	}
 	public function sqlFrom() // For backward compatibility
 	{
@@ -464,6 +563,37 @@ class t204_audittrail extends DbTable
 	public function update(&$rs, $where = "", $rsold = NULL, $curfilter = TRUE)
 	{
 		$conn = $this->getConnection();
+
+		// Cascade Update detail table 't102_ho_detail'
+		$cascadeUpdate = FALSE;
+		$rscascade = [];
+		if ($rsold && (isset($rs['id']) && $rsold['id'] != $rs['id'])) { // Update detail field 'hohead_id'
+			$cascadeUpdate = TRUE;
+			$rscascade['hohead_id'] = $rs['id'];
+		}
+		if ($cascadeUpdate) {
+			if (!isset($GLOBALS["t102_ho_detail"]))
+				$GLOBALS["t102_ho_detail"] = new t102_ho_detail();
+			$rswrk = $GLOBALS["t102_ho_detail"]->loadRs("`hohead_id` = " . QuotedValue($rsold['id'], DATATYPE_NUMBER, 'DB'));
+			while ($rswrk && !$rswrk->EOF) {
+				$rskey = [];
+				$fldname = 'id';
+				$rskey[$fldname] = $rswrk->fields[$fldname];
+				$rsdtlold = &$rswrk->fields;
+				$rsdtlnew = array_merge($rsdtlold, $rscascade);
+
+				// Call Row_Updating event
+				$success = $GLOBALS["t102_ho_detail"]->Row_Updating($rsdtlold, $rsdtlnew);
+				if ($success)
+					$success = $GLOBALS["t102_ho_detail"]->update($rscascade, $rskey, $rswrk->fields);
+				if (!$success)
+					return FALSE;
+
+				// Call Row_Updated event
+				$GLOBALS["t102_ho_detail"]->Row_Updated($rsdtlold, $rsdtlnew);
+				$rswrk->moveNext();
+			}
+		}
 		$success = $conn->execute($this->updateSql($rs, $where, $curfilter));
 		if ($success && $this->AuditTrailOnEdit && $rsold) {
 			$rsaudit = $rs;
@@ -499,6 +629,32 @@ class t204_audittrail extends DbTable
 	{
 		$success = TRUE;
 		$conn = $this->getConnection();
+
+		// Cascade delete detail table 't102_ho_detail'
+		if (!isset($GLOBALS["t102_ho_detail"]))
+			$GLOBALS["t102_ho_detail"] = new t102_ho_detail();
+		$rscascade = $GLOBALS["t102_ho_detail"]->loadRs("`hohead_id` = " . QuotedValue($rs['id'], DATATYPE_NUMBER, "DB"));
+		$dtlrows = ($rscascade) ? $rscascade->getRows() : [];
+
+		// Call Row Deleting event
+		foreach ($dtlrows as $dtlrow) {
+			$success = $GLOBALS["t102_ho_detail"]->Row_Deleting($dtlrow);
+			if (!$success)
+				break;
+		}
+		if ($success) {
+			foreach ($dtlrows as $dtlrow) {
+				$success = $GLOBALS["t102_ho_detail"]->delete($dtlrow); // Delete
+				if (!$success)
+					break;
+			}
+		}
+
+		// Call Row Deleted event
+		if ($success) {
+			foreach ($dtlrows as $dtlrow)
+				$GLOBALS["t102_ho_detail"]->Row_Deleted($dtlrow);
+		}
 		if ($success)
 			$success = $conn->execute($this->deleteSql($rs, $where, $curfilter));
 		if ($success && $this->AuditTrailOnDelete)
@@ -513,15 +669,18 @@ class t204_audittrail extends DbTable
 			return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->datetime->DbValue = $row['datetime'];
-		$this->script->DbValue = $row['script'];
-		$this->user->DbValue = $row['user'];
-		$this->_action->DbValue = $row['action'];
-		$this->_table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
-		$this->keyvalue->DbValue = $row['keyvalue'];
-		$this->oldvalue->DbValue = $row['oldvalue'];
-		$this->newvalue->DbValue = $row['newvalue'];
+		$this->tr_no->DbValue = $row['tr_no'];
+		$this->tr_date->DbValue = $row['tr_date'];
+		$this->ho_to->DbValue = $row['ho_to'];
+		$this->cno_to->DbValue = $row['cno_to'];
+		$this->dept_to->DbValue = $row['dept_to'];
+		$this->ho_by->DbValue = $row['ho_by'];
+		$this->cno_by->DbValue = $row['cno_by'];
+		$this->dept_by->DbValue = $row['dept_by'];
+		$this->sign1->DbValue = $row['sign1'];
+		$this->sign2->DbValue = $row['sign2'];
+		$this->sign3->DbValue = $row['sign3'];
+		$this->sign4->DbValue = $row['sign4'];
 	}
 
 	// Delete uploaded files
@@ -564,7 +723,7 @@ class t204_audittrail extends DbTable
 		if (@$_SESSION[$name] != "") {
 			return $_SESSION[$name];
 		} else {
-			return "t204_audittraillist.php";
+			return "t101_ho_headlist.php";
 		}
 	}
 	public function setReturnUrl($v)
@@ -576,11 +735,11 @@ class t204_audittrail extends DbTable
 	public function getModalCaption($pageName)
 	{
 		global $Language;
-		if ($pageName == "t204_audittrailview.php")
+		if ($pageName == "t101_ho_headview.php")
 			return $Language->phrase("View");
-		elseif ($pageName == "t204_audittrailedit.php")
+		elseif ($pageName == "t101_ho_headedit.php")
 			return $Language->phrase("Edit");
-		elseif ($pageName == "t204_audittrailadd.php")
+		elseif ($pageName == "t101_ho_headadd.php")
 			return $Language->phrase("Add");
 		else
 			return "";
@@ -589,16 +748,16 @@ class t204_audittrail extends DbTable
 	// List URL
 	public function getListUrl()
 	{
-		return "t204_audittraillist.php";
+		return "t101_ho_headlist.php";
 	}
 
 	// View URL
 	public function getViewUrl($parm = "")
 	{
 		if ($parm != "")
-			$url = $this->keyUrl("t204_audittrailview.php", $this->getUrlParm($parm));
+			$url = $this->keyUrl("t101_ho_headview.php", $this->getUrlParm($parm));
 		else
-			$url = $this->keyUrl("t204_audittrailview.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
+			$url = $this->keyUrl("t101_ho_headview.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
 		return $this->addMasterUrl($url);
 	}
 
@@ -606,16 +765,19 @@ class t204_audittrail extends DbTable
 	public function getAddUrl($parm = "")
 	{
 		if ($parm != "")
-			$url = "t204_audittrailadd.php?" . $this->getUrlParm($parm);
+			$url = "t101_ho_headadd.php?" . $this->getUrlParm($parm);
 		else
-			$url = "t204_audittrailadd.php";
+			$url = "t101_ho_headadd.php";
 		return $this->addMasterUrl($url);
 	}
 
 	// Edit URL
 	public function getEditUrl($parm = "")
 	{
-		$url = $this->keyUrl("t204_audittrailedit.php", $this->getUrlParm($parm));
+		if ($parm != "")
+			$url = $this->keyUrl("t101_ho_headedit.php", $this->getUrlParm($parm));
+		else
+			$url = $this->keyUrl("t101_ho_headedit.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
 		return $this->addMasterUrl($url);
 	}
 
@@ -629,7 +791,10 @@ class t204_audittrail extends DbTable
 	// Copy URL
 	public function getCopyUrl($parm = "")
 	{
-		$url = $this->keyUrl("t204_audittrailadd.php", $this->getUrlParm($parm));
+		if ($parm != "")
+			$url = $this->keyUrl("t101_ho_headadd.php", $this->getUrlParm($parm));
+		else
+			$url = $this->keyUrl("t101_ho_headadd.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
 		return $this->addMasterUrl($url);
 	}
 
@@ -643,7 +808,7 @@ class t204_audittrail extends DbTable
 	// Delete URL
 	public function getDeleteUrl()
 	{
-		return $this->keyUrl("t204_audittraildelete.php", $this->getUrlParm());
+		return $this->keyUrl("t101_ho_headdelete.php", $this->getUrlParm());
 	}
 
 	// Add master url
@@ -753,15 +918,18 @@ class t204_audittrail extends DbTable
 	public function loadListRowValues(&$rs)
 	{
 		$this->id->setDbValue($rs->fields('id'));
-		$this->datetime->setDbValue($rs->fields('datetime'));
-		$this->script->setDbValue($rs->fields('script'));
-		$this->user->setDbValue($rs->fields('user'));
-		$this->_action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
-		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
-		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
-		$this->newvalue->setDbValue($rs->fields('newvalue'));
+		$this->tr_no->setDbValue($rs->fields('tr_no'));
+		$this->tr_date->setDbValue($rs->fields('tr_date'));
+		$this->ho_to->setDbValue($rs->fields('ho_to'));
+		$this->cno_to->setDbValue($rs->fields('cno_to'));
+		$this->dept_to->setDbValue($rs->fields('dept_to'));
+		$this->ho_by->setDbValue($rs->fields('ho_by'));
+		$this->cno_by->setDbValue($rs->fields('cno_by'));
+		$this->dept_by->setDbValue($rs->fields('dept_by'));
+		$this->sign1->setDbValue($rs->fields('sign1'));
+		$this->sign2->setDbValue($rs->fields('sign2'));
+		$this->sign3->setDbValue($rs->fields('sign3'));
+		$this->sign4->setDbValue($rs->fields('sign4'));
 	}
 
 	// Render list row values
@@ -774,106 +942,281 @@ class t204_audittrail extends DbTable
 
 		// Common render codes
 		// id
-		// datetime
-		// script
-		// user
-		// action
-		// table
-		// field
-		// keyvalue
-		// oldvalue
-		// newvalue
+		// tr_no
+		// tr_date
+		// ho_to
+		// cno_to
+		// dept_to
+		// ho_by
+		// cno_by
+		// dept_by
+		// sign1
+		// sign2
+		// sign3
+		// sign4
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->ViewValue = $this->datetime->CurrentValue;
-		$this->datetime->ViewValue = FormatDateTime($this->datetime->ViewValue, 0);
-		$this->datetime->ViewCustomAttributes = "";
+		// tr_no
+		$this->tr_no->ViewValue = $this->tr_no->CurrentValue;
+		$this->tr_no->ViewCustomAttributes = "";
 
-		// script
-		$this->script->ViewValue = $this->script->CurrentValue;
-		$this->script->ViewCustomAttributes = "";
+		// tr_date
+		$this->tr_date->ViewValue = $this->tr_date->CurrentValue;
+		$this->tr_date->ViewValue = FormatDateTime($this->tr_date->ViewValue, 7);
+		$this->tr_date->ViewCustomAttributes = "";
 
-		// user
-		$this->user->ViewValue = $this->user->CurrentValue;
-		$this->user->ViewCustomAttributes = "";
+		// ho_to
+		$curVal = strval($this->ho_to->CurrentValue);
+		if ($curVal != "") {
+			$this->ho_to->ViewValue = $this->ho_to->lookupCacheOption($curVal);
+			if ($this->ho_to->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->ho_to->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->ho_to->ViewValue = $this->ho_to->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->ho_to->ViewValue = $this->ho_to->CurrentValue;
+				}
+			}
+		} else {
+			$this->ho_to->ViewValue = NULL;
+		}
+		$this->ho_to->ViewCustomAttributes = "";
 
-		// action
-		$this->_action->ViewValue = $this->_action->CurrentValue;
-		$this->_action->ViewCustomAttributes = "";
+		// cno_to
+		$this->cno_to->ViewValue = $this->cno_to->CurrentValue;
+		$this->cno_to->ViewCustomAttributes = "";
 
-		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+		// dept_to
+		$curVal = strval($this->dept_to->CurrentValue);
+		if ($curVal != "") {
+			$this->dept_to->ViewValue = $this->dept_to->lookupCacheOption($curVal);
+			if ($this->dept_to->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->dept_to->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->dept_to->ViewValue = $this->dept_to->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->dept_to->ViewValue = $this->dept_to->CurrentValue;
+				}
+			}
+		} else {
+			$this->dept_to->ViewValue = NULL;
+		}
+		$this->dept_to->ViewCustomAttributes = "";
 
-		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		// ho_by
+		$curVal = strval($this->ho_by->CurrentValue);
+		if ($curVal != "") {
+			$this->ho_by->ViewValue = $this->ho_by->lookupCacheOption($curVal);
+			if ($this->ho_by->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->ho_by->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->ho_by->ViewValue = $this->ho_by->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->ho_by->ViewValue = $this->ho_by->CurrentValue;
+				}
+			}
+		} else {
+			$this->ho_by->ViewValue = NULL;
+		}
+		$this->ho_by->ViewCustomAttributes = "";
 
-		// keyvalue
-		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->ViewCustomAttributes = "";
+		// cno_by
+		$this->cno_by->ViewValue = $this->cno_by->CurrentValue;
+		$this->cno_by->ViewValue = FormatNumber($this->cno_by->ViewValue, 0, -2, -2, -2);
+		$this->cno_by->ViewCustomAttributes = "";
 
-		// oldvalue
-		$this->oldvalue->ViewValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->ViewCustomAttributes = "";
+		// dept_by
+		$curVal = strval($this->dept_by->CurrentValue);
+		if ($curVal != "") {
+			$this->dept_by->ViewValue = $this->dept_by->lookupCacheOption($curVal);
+			if ($this->dept_by->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->dept_by->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->dept_by->ViewValue = $this->dept_by->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->dept_by->ViewValue = $this->dept_by->CurrentValue;
+				}
+			}
+		} else {
+			$this->dept_by->ViewValue = NULL;
+		}
+		$this->dept_by->ViewCustomAttributes = "";
 
-		// newvalue
-		$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
-		$this->newvalue->ViewCustomAttributes = "";
+		// sign1
+		$curVal = strval($this->sign1->CurrentValue);
+		if ($curVal != "") {
+			$this->sign1->ViewValue = $this->sign1->lookupCacheOption($curVal);
+			if ($this->sign1->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->sign1->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->sign1->ViewValue = $this->sign1->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->sign1->ViewValue = $this->sign1->CurrentValue;
+				}
+			}
+		} else {
+			$this->sign1->ViewValue = NULL;
+		}
+		$this->sign1->ViewCustomAttributes = "";
+
+		// sign2
+		$curVal = strval($this->sign2->CurrentValue);
+		if ($curVal != "") {
+			$this->sign2->ViewValue = $this->sign2->lookupCacheOption($curVal);
+			if ($this->sign2->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->sign2->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->sign2->ViewValue = $this->sign2->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->sign2->ViewValue = $this->sign2->CurrentValue;
+				}
+			}
+		} else {
+			$this->sign2->ViewValue = NULL;
+		}
+		$this->sign2->ViewCustomAttributes = "";
+
+		// sign3
+		$curVal = strval($this->sign3->CurrentValue);
+		if ($curVal != "") {
+			$this->sign3->ViewValue = $this->sign3->lookupCacheOption($curVal);
+			if ($this->sign3->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->sign3->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->sign3->ViewValue = $this->sign3->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->sign3->ViewValue = $this->sign3->CurrentValue;
+				}
+			}
+		} else {
+			$this->sign3->ViewValue = NULL;
+		}
+		$this->sign3->ViewCustomAttributes = "";
+
+		// sign4
+		$curVal = strval($this->sign4->CurrentValue);
+		if ($curVal != "") {
+			$this->sign4->ViewValue = $this->sign4->lookupCacheOption($curVal);
+			if ($this->sign4->ViewValue === NULL) { // Lookup from database
+				$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+				$sqlWrk = $this->sign4->Lookup->getSql(FALSE, $filterWrk, '', $this);
+				$rswrk = Conn()->execute($sqlWrk);
+				if ($rswrk && !$rswrk->EOF) { // Lookup values found
+					$arwrk = [];
+					$arwrk[1] = $rswrk->fields('df');
+					$this->sign4->ViewValue = $this->sign4->displayValue($arwrk);
+					$rswrk->Close();
+				} else {
+					$this->sign4->ViewValue = $this->sign4->CurrentValue;
+				}
+			}
+		} else {
+			$this->sign4->ViewValue = NULL;
+		}
+		$this->sign4->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// datetime
-		$this->datetime->LinkCustomAttributes = "";
-		$this->datetime->HrefValue = "";
-		$this->datetime->TooltipValue = "";
+		// tr_no
+		$this->tr_no->LinkCustomAttributes = "";
+		$this->tr_no->HrefValue = "";
+		$this->tr_no->TooltipValue = "";
 
-		// script
-		$this->script->LinkCustomAttributes = "";
-		$this->script->HrefValue = "";
-		$this->script->TooltipValue = "";
+		// tr_date
+		$this->tr_date->LinkCustomAttributes = "";
+		$this->tr_date->HrefValue = "";
+		$this->tr_date->TooltipValue = "";
 
-		// user
-		$this->user->LinkCustomAttributes = "";
-		$this->user->HrefValue = "";
-		$this->user->TooltipValue = "";
+		// ho_to
+		$this->ho_to->LinkCustomAttributes = "";
+		$this->ho_to->HrefValue = "";
+		$this->ho_to->TooltipValue = "";
 
-		// action
-		$this->_action->LinkCustomAttributes = "";
-		$this->_action->HrefValue = "";
-		$this->_action->TooltipValue = "";
+		// cno_to
+		$this->cno_to->LinkCustomAttributes = "";
+		$this->cno_to->HrefValue = "";
+		$this->cno_to->TooltipValue = "";
 
-		// table
-		$this->_table->LinkCustomAttributes = "";
-		$this->_table->HrefValue = "";
-		$this->_table->TooltipValue = "";
+		// dept_to
+		$this->dept_to->LinkCustomAttributes = "";
+		$this->dept_to->HrefValue = "";
+		$this->dept_to->TooltipValue = "";
 
-		// field
-		$this->field->LinkCustomAttributes = "";
-		$this->field->HrefValue = "";
-		$this->field->TooltipValue = "";
+		// ho_by
+		$this->ho_by->LinkCustomAttributes = "";
+		$this->ho_by->HrefValue = "";
+		$this->ho_by->TooltipValue = "";
 
-		// keyvalue
-		$this->keyvalue->LinkCustomAttributes = "";
-		$this->keyvalue->HrefValue = "";
-		$this->keyvalue->TooltipValue = "";
+		// cno_by
+		$this->cno_by->LinkCustomAttributes = "";
+		$this->cno_by->HrefValue = "";
+		$this->cno_by->TooltipValue = "";
 
-		// oldvalue
-		$this->oldvalue->LinkCustomAttributes = "";
-		$this->oldvalue->HrefValue = "";
-		$this->oldvalue->TooltipValue = "";
+		// dept_by
+		$this->dept_by->LinkCustomAttributes = "";
+		$this->dept_by->HrefValue = "";
+		$this->dept_by->TooltipValue = "";
 
-		// newvalue
-		$this->newvalue->LinkCustomAttributes = "";
-		$this->newvalue->HrefValue = "";
-		$this->newvalue->TooltipValue = "";
+		// sign1
+		$this->sign1->LinkCustomAttributes = "";
+		$this->sign1->HrefValue = "";
+		$this->sign1->TooltipValue = "";
+
+		// sign2
+		$this->sign2->LinkCustomAttributes = "";
+		$this->sign2->HrefValue = "";
+		$this->sign2->TooltipValue = "";
+
+		// sign3
+		$this->sign3->LinkCustomAttributes = "";
+		$this->sign3->HrefValue = "";
+		$this->sign3->TooltipValue = "";
+
+		// sign4
+		$this->sign4->LinkCustomAttributes = "";
+		$this->sign4->HrefValue = "";
+		$this->sign4->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -896,69 +1239,65 @@ class t204_audittrail extends DbTable
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->EditAttrs["class"] = "form-control";
-		$this->datetime->EditCustomAttributes = "";
-		$this->datetime->EditValue = FormatDateTime($this->datetime->CurrentValue, 8);
-		$this->datetime->PlaceHolder = RemoveHtml($this->datetime->caption());
+		// tr_no
+		$this->tr_no->EditAttrs["class"] = "form-control";
+		$this->tr_no->EditCustomAttributes = "";
+		if (!$this->tr_no->Raw)
+			$this->tr_no->CurrentValue = HtmlDecode($this->tr_no->CurrentValue);
+		$this->tr_no->EditValue = $this->tr_no->CurrentValue;
+		$this->tr_no->PlaceHolder = RemoveHtml($this->tr_no->caption());
 
-		// script
-		$this->script->EditAttrs["class"] = "form-control";
-		$this->script->EditCustomAttributes = "";
-		if (!$this->script->Raw)
-			$this->script->CurrentValue = HtmlDecode($this->script->CurrentValue);
-		$this->script->EditValue = $this->script->CurrentValue;
-		$this->script->PlaceHolder = RemoveHtml($this->script->caption());
+		// tr_date
+		$this->tr_date->EditAttrs["class"] = "form-control";
+		$this->tr_date->EditCustomAttributes = "";
+		$this->tr_date->EditValue = FormatDateTime($this->tr_date->CurrentValue, 7);
+		$this->tr_date->PlaceHolder = RemoveHtml($this->tr_date->caption());
 
-		// user
-		$this->user->EditAttrs["class"] = "form-control";
-		$this->user->EditCustomAttributes = "";
-		if (!$this->user->Raw)
-			$this->user->CurrentValue = HtmlDecode($this->user->CurrentValue);
-		$this->user->EditValue = $this->user->CurrentValue;
-		$this->user->PlaceHolder = RemoveHtml($this->user->caption());
+		// ho_to
+		$this->ho_to->EditAttrs["class"] = "form-control";
+		$this->ho_to->EditCustomAttributes = "";
 
-		// action
-		$this->_action->EditAttrs["class"] = "form-control";
-		$this->_action->EditCustomAttributes = "";
-		if (!$this->_action->Raw)
-			$this->_action->CurrentValue = HtmlDecode($this->_action->CurrentValue);
-		$this->_action->EditValue = $this->_action->CurrentValue;
-		$this->_action->PlaceHolder = RemoveHtml($this->_action->caption());
+		// cno_to
+		$this->cno_to->EditAttrs["class"] = "form-control";
+		$this->cno_to->EditCustomAttributes = "";
+		if (!$this->cno_to->Raw)
+			$this->cno_to->CurrentValue = HtmlDecode($this->cno_to->CurrentValue);
+		$this->cno_to->EditValue = $this->cno_to->CurrentValue;
+		$this->cno_to->PlaceHolder = RemoveHtml($this->cno_to->caption());
 
-		// table
-		$this->_table->EditAttrs["class"] = "form-control";
-		$this->_table->EditCustomAttributes = "";
-		if (!$this->_table->Raw)
-			$this->_table->CurrentValue = HtmlDecode($this->_table->CurrentValue);
-		$this->_table->EditValue = $this->_table->CurrentValue;
-		$this->_table->PlaceHolder = RemoveHtml($this->_table->caption());
+		// dept_to
+		$this->dept_to->EditAttrs["class"] = "form-control";
+		$this->dept_to->EditCustomAttributes = "";
 
-		// field
-		$this->field->EditAttrs["class"] = "form-control";
-		$this->field->EditCustomAttributes = "";
-		if (!$this->field->Raw)
-			$this->field->CurrentValue = HtmlDecode($this->field->CurrentValue);
-		$this->field->EditValue = $this->field->CurrentValue;
-		$this->field->PlaceHolder = RemoveHtml($this->field->caption());
+		// ho_by
+		$this->ho_by->EditAttrs["class"] = "form-control";
+		$this->ho_by->EditCustomAttributes = "";
 
-		// keyvalue
-		$this->keyvalue->EditAttrs["class"] = "form-control";
-		$this->keyvalue->EditCustomAttributes = "";
-		$this->keyvalue->EditValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->PlaceHolder = RemoveHtml($this->keyvalue->caption());
+		// cno_by
+		$this->cno_by->EditAttrs["class"] = "form-control";
+		$this->cno_by->EditCustomAttributes = "";
+		$this->cno_by->EditValue = $this->cno_by->CurrentValue;
+		$this->cno_by->PlaceHolder = RemoveHtml($this->cno_by->caption());
 
-		// oldvalue
-		$this->oldvalue->EditAttrs["class"] = "form-control";
-		$this->oldvalue->EditCustomAttributes = "";
-		$this->oldvalue->EditValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->PlaceHolder = RemoveHtml($this->oldvalue->caption());
+		// dept_by
+		$this->dept_by->EditAttrs["class"] = "form-control";
+		$this->dept_by->EditCustomAttributes = "";
 
-		// newvalue
-		$this->newvalue->EditAttrs["class"] = "form-control";
-		$this->newvalue->EditCustomAttributes = "";
-		$this->newvalue->EditValue = $this->newvalue->CurrentValue;
-		$this->newvalue->PlaceHolder = RemoveHtml($this->newvalue->caption());
+		// sign1
+		$this->sign1->EditAttrs["class"] = "form-control";
+		$this->sign1->EditCustomAttributes = "";
+
+		// sign2
+		$this->sign2->EditAttrs["class"] = "form-control";
+		$this->sign2->EditCustomAttributes = "";
+
+		// sign3
+		$this->sign3->EditAttrs["class"] = "form-control";
+		$this->sign3->EditCustomAttributes = "";
+
+		// sign4
+		$this->sign4->EditAttrs["class"] = "form-control";
+		$this->sign4->EditCustomAttributes = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -989,24 +1328,32 @@ class t204_audittrail extends DbTable
 			if ($doc->Horizontal) { // Horizontal format, write header
 				$doc->beginExportRow();
 				if ($exportPageType == "view") {
-					$doc->exportCaption($this->id);
-					$doc->exportCaption($this->datetime);
-					$doc->exportCaption($this->script);
-					$doc->exportCaption($this->user);
-					$doc->exportCaption($this->_action);
-					$doc->exportCaption($this->_table);
-					$doc->exportCaption($this->field);
-					$doc->exportCaption($this->keyvalue);
-					$doc->exportCaption($this->oldvalue);
-					$doc->exportCaption($this->newvalue);
+					$doc->exportCaption($this->tr_no);
+					$doc->exportCaption($this->tr_date);
+					$doc->exportCaption($this->ho_to);
+					$doc->exportCaption($this->cno_to);
+					$doc->exportCaption($this->dept_to);
+					$doc->exportCaption($this->ho_by);
+					$doc->exportCaption($this->cno_by);
+					$doc->exportCaption($this->dept_by);
+					$doc->exportCaption($this->sign1);
+					$doc->exportCaption($this->sign2);
+					$doc->exportCaption($this->sign3);
+					$doc->exportCaption($this->sign4);
 				} else {
 					$doc->exportCaption($this->id);
-					$doc->exportCaption($this->datetime);
-					$doc->exportCaption($this->script);
-					$doc->exportCaption($this->user);
-					$doc->exportCaption($this->_action);
-					$doc->exportCaption($this->_table);
-					$doc->exportCaption($this->field);
+					$doc->exportCaption($this->tr_no);
+					$doc->exportCaption($this->tr_date);
+					$doc->exportCaption($this->ho_to);
+					$doc->exportCaption($this->cno_to);
+					$doc->exportCaption($this->dept_to);
+					$doc->exportCaption($this->ho_by);
+					$doc->exportCaption($this->cno_by);
+					$doc->exportCaption($this->dept_by);
+					$doc->exportCaption($this->sign1);
+					$doc->exportCaption($this->sign2);
+					$doc->exportCaption($this->sign3);
+					$doc->exportCaption($this->sign4);
 				}
 				$doc->endExportRow();
 			}
@@ -1038,24 +1385,32 @@ class t204_audittrail extends DbTable
 				if (!$doc->ExportCustom) {
 					$doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
 					if ($exportPageType == "view") {
-						$doc->exportField($this->id);
-						$doc->exportField($this->datetime);
-						$doc->exportField($this->script);
-						$doc->exportField($this->user);
-						$doc->exportField($this->_action);
-						$doc->exportField($this->_table);
-						$doc->exportField($this->field);
-						$doc->exportField($this->keyvalue);
-						$doc->exportField($this->oldvalue);
-						$doc->exportField($this->newvalue);
+						$doc->exportField($this->tr_no);
+						$doc->exportField($this->tr_date);
+						$doc->exportField($this->ho_to);
+						$doc->exportField($this->cno_to);
+						$doc->exportField($this->dept_to);
+						$doc->exportField($this->ho_by);
+						$doc->exportField($this->cno_by);
+						$doc->exportField($this->dept_by);
+						$doc->exportField($this->sign1);
+						$doc->exportField($this->sign2);
+						$doc->exportField($this->sign3);
+						$doc->exportField($this->sign4);
 					} else {
 						$doc->exportField($this->id);
-						$doc->exportField($this->datetime);
-						$doc->exportField($this->script);
-						$doc->exportField($this->user);
-						$doc->exportField($this->_action);
-						$doc->exportField($this->_table);
-						$doc->exportField($this->field);
+						$doc->exportField($this->tr_no);
+						$doc->exportField($this->tr_date);
+						$doc->exportField($this->ho_to);
+						$doc->exportField($this->cno_to);
+						$doc->exportField($this->dept_to);
+						$doc->exportField($this->ho_by);
+						$doc->exportField($this->cno_by);
+						$doc->exportField($this->dept_by);
+						$doc->exportField($this->sign1);
+						$doc->exportField($this->sign2);
+						$doc->exportField($this->sign3);
+						$doc->exportField($this->sign4);
 					}
 					$doc->endExportRow($rowCnt);
 				}
@@ -1082,7 +1437,7 @@ class t204_audittrail extends DbTable
 	// Write Audit Trail start/end for grid update
 	public function writeAuditTrailDummy($typ)
 	{
-		$table = 't204_audittrail';
+		$table = 't101_ho_head';
 		$usr = CurrentUserID();
 		WriteAuditTrail("log", DbCurrentDateTime(), ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -1093,7 +1448,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnAdd)
 			return;
-		$table = 't204_audittrail';
+		$table = 't101_ho_head';
 
 		// Get key value
 		$key = "";
@@ -1130,7 +1485,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnEdit)
 			return;
-		$table = 't204_audittrail';
+		$table = 't101_ho_head';
 
 		// Get key value
 		$key = "";
@@ -1180,7 +1535,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnDelete)
 			return;
-		$table = 't204_audittrail';
+		$table = 't101_ho_head';
 
 		// Get key value
 		$key = "";

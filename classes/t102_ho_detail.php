@@ -2,9 +2,9 @@
 <?php
 
 /**
- * Table class for t204_audittrail
+ * Table class for t102_ho_detail
  */
-class t204_audittrail extends DbTable
+class t102_ho_detail extends DbTable
 {
 	protected $SqlFrom = "";
 	protected $SqlSelect = "";
@@ -34,15 +34,14 @@ class t204_audittrail extends DbTable
 
 	// Fields
 	public $id;
-	public $datetime;
-	public $script;
-	public $user;
-	public $_action;
-	public $_table;
-	public $field;
-	public $keyvalue;
-	public $oldvalue;
-	public $newvalue;
+	public $hohead_id;
+	public $asset_id;
+	public $proc_date;
+	public $proc_ccost;
+	public $dep_amount;
+	public $dep_ytd;
+	public $nb_val;
+	public $remarks;
 
 	// Constructor
 	public function __construct()
@@ -53,12 +52,12 @@ class t204_audittrail extends DbTable
 		// Language object
 		if (!isset($Language))
 			$Language = new Language();
-		$this->TableVar = 't204_audittrail';
-		$this->TableName = 't204_audittrail';
+		$this->TableVar = 't102_ho_detail';
+		$this->TableName = 't102_ho_detail';
 		$this->TableType = 'TABLE';
 
 		// Update Table
-		$this->UpdateTable = "`t204_audittrail`";
+		$this->UpdateTable = "`t102_ho_detail`";
 		$this->Dbid = 'DB';
 		$this->ExportAll = TRUE;
 		$this->ExportPageBreakCount = 0; // Page break per every n record (PDF only)
@@ -68,9 +67,9 @@ class t204_audittrail extends DbTable
 		$this->ExportExcelPageSize = ""; // Page size (PhpSpreadsheet only)
 		$this->ExportWordPageOrientation = "portrait"; // Page orientation (PHPWord only)
 		$this->ExportWordColumnWidth = NULL; // Cell width (PHPWord only)
-		$this->DetailAdd = FALSE; // Allow detail add
-		$this->DetailEdit = FALSE; // Allow detail edit
-		$this->DetailView = FALSE; // Allow detail view
+		$this->DetailAdd = TRUE; // Allow detail add
+		$this->DetailEdit = TRUE; // Allow detail edit
+		$this->DetailView = TRUE; // Allow detail view
 		$this->ShowMultipleDetails = FALSE; // Show multiple details
 		$this->GridAddRowCount = 5;
 		$this->AllowAddDeleteRow = TRUE; // Allow add/delete row
@@ -79,60 +78,70 @@ class t204_audittrail extends DbTable
 		$this->BasicSearch = new BasicSearch($this->TableVar);
 
 		// id
-		$this->id = new DbField('t204_audittrail', 't204_audittrail', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
+		$this->id = new DbField('t102_ho_detail', 't102_ho_detail', 'x_id', 'id', '`id`', '`id`', 3, 11, -1, FALSE, '`id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'NO');
 		$this->id->IsAutoIncrement = TRUE; // Autoincrement field
 		$this->id->IsPrimaryKey = TRUE; // Primary key field
 		$this->id->Sortable = TRUE; // Allow sort
 		$this->id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
 		$this->fields['id'] = &$this->id;
 
-		// datetime
-		$this->datetime = new DbField('t204_audittrail', 't204_audittrail', 'x_datetime', 'datetime', '`datetime`', CastDateFieldForLike("`datetime`", 0, "DB"), 135, 19, 0, FALSE, '`datetime`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->datetime->Nullable = FALSE; // NOT NULL field
-		$this->datetime->Required = TRUE; // Required field
-		$this->datetime->Sortable = TRUE; // Allow sort
-		$this->datetime->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
-		$this->fields['datetime'] = &$this->datetime;
+		// hohead_id
+		$this->hohead_id = new DbField('t102_ho_detail', 't102_ho_detail', 'x_hohead_id', 'hohead_id', '`hohead_id`', '`hohead_id`', 3, 11, -1, FALSE, '`hohead_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->hohead_id->IsForeignKey = TRUE; // Foreign key field
+		$this->hohead_id->Nullable = FALSE; // NOT NULL field
+		$this->hohead_id->Required = TRUE; // Required field
+		$this->hohead_id->Sortable = TRUE; // Allow sort
+		$this->hohead_id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['hohead_id'] = &$this->hohead_id;
 
-		// script
-		$this->script = new DbField('t204_audittrail', 't204_audittrail', 'x_script', 'script', '`script`', '`script`', 200, 80, -1, FALSE, '`script`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->script->Sortable = TRUE; // Allow sort
-		$this->fields['script'] = &$this->script;
+		// asset_id
+		$this->asset_id = new DbField('t102_ho_detail', 't102_ho_detail', 'x_asset_id', 'asset_id', '`asset_id`', '`asset_id`', 3, 11, -1, FALSE, '`asset_id`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->asset_id->Nullable = FALSE; // NOT NULL field
+		$this->asset_id->Required = TRUE; // Required field
+		$this->asset_id->Sortable = TRUE; // Allow sort
+		$this->asset_id->DefaultErrorMessage = $Language->phrase("IncorrectInteger");
+		$this->fields['asset_id'] = &$this->asset_id;
 
-		// user
-		$this->user = new DbField('t204_audittrail', 't204_audittrail', 'x_user', 'user', '`user`', '`user`', 200, 80, -1, FALSE, '`user`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->user->Sortable = TRUE; // Allow sort
-		$this->fields['user'] = &$this->user;
+		// proc_date
+		$this->proc_date = new DbField('t102_ho_detail', 't102_ho_detail', 'x_proc_date', 'proc_date', '`proc_date`', CastDateFieldForLike("`proc_date`", 0, "DB"), 133, 10, 0, FALSE, '`proc_date`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->proc_date->Nullable = FALSE; // NOT NULL field
+		$this->proc_date->Required = TRUE; // Required field
+		$this->proc_date->Sortable = TRUE; // Allow sort
+		$this->proc_date->DefaultErrorMessage = str_replace("%s", $GLOBALS["DATE_FORMAT"], $Language->phrase("IncorrectDate"));
+		$this->fields['proc_date'] = &$this->proc_date;
 
-		// action
-		$this->_action = new DbField('t204_audittrail', 't204_audittrail', 'x__action', 'action', '`action`', '`action`', 200, 80, -1, FALSE, '`action`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_action->Sortable = TRUE; // Allow sort
-		$this->fields['action'] = &$this->_action;
+		// proc_ccost
+		$this->proc_ccost = new DbField('t102_ho_detail', 't102_ho_detail', 'x_proc_ccost', 'proc_ccost', '`proc_ccost`', '`proc_ccost`', 4, 14, -1, FALSE, '`proc_ccost`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->proc_ccost->Nullable = FALSE; // NOT NULL field
+		$this->proc_ccost->Sortable = TRUE; // Allow sort
+		$this->proc_ccost->DefaultErrorMessage = $Language->phrase("IncorrectFloat");
+		$this->fields['proc_ccost'] = &$this->proc_ccost;
 
-		// table
-		$this->_table = new DbField('t204_audittrail', 't204_audittrail', 'x__table', 'table', '`table`', '`table`', 200, 80, -1, FALSE, '`table`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->_table->Sortable = TRUE; // Allow sort
-		$this->fields['table'] = &$this->_table;
+		// dep_amount
+		$this->dep_amount = new DbField('t102_ho_detail', 't102_ho_detail', 'x_dep_amount', 'dep_amount', '`dep_amount`', '`dep_amount`', 4, 14, -1, FALSE, '`dep_amount`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->dep_amount->Nullable = FALSE; // NOT NULL field
+		$this->dep_amount->Sortable = TRUE; // Allow sort
+		$this->dep_amount->DefaultErrorMessage = $Language->phrase("IncorrectFloat");
+		$this->fields['dep_amount'] = &$this->dep_amount;
 
-		// field
-		$this->field = new DbField('t204_audittrail', 't204_audittrail', 'x_field', 'field', '`field`', '`field`', 200, 80, -1, FALSE, '`field`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
-		$this->field->Sortable = TRUE; // Allow sort
-		$this->fields['field'] = &$this->field;
+		// dep_ytd
+		$this->dep_ytd = new DbField('t102_ho_detail', 't102_ho_detail', 'x_dep_ytd', 'dep_ytd', '`dep_ytd`', '`dep_ytd`', 4, 14, -1, FALSE, '`dep_ytd`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->dep_ytd->Nullable = FALSE; // NOT NULL field
+		$this->dep_ytd->Sortable = TRUE; // Allow sort
+		$this->dep_ytd->DefaultErrorMessage = $Language->phrase("IncorrectFloat");
+		$this->fields['dep_ytd'] = &$this->dep_ytd;
 
-		// keyvalue
-		$this->keyvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_keyvalue', 'keyvalue', '`keyvalue`', '`keyvalue`', 201, -1, -1, FALSE, '`keyvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->keyvalue->Sortable = TRUE; // Allow sort
-		$this->fields['keyvalue'] = &$this->keyvalue;
+		// nb_val
+		$this->nb_val = new DbField('t102_ho_detail', 't102_ho_detail', 'x_nb_val', 'nb_val', '`nb_val`', '`nb_val`', 4, 14, -1, FALSE, '`nb_val`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXT');
+		$this->nb_val->Nullable = FALSE; // NOT NULL field
+		$this->nb_val->Sortable = TRUE; // Allow sort
+		$this->nb_val->DefaultErrorMessage = $Language->phrase("IncorrectFloat");
+		$this->fields['nb_val'] = &$this->nb_val;
 
-		// oldvalue
-		$this->oldvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_oldvalue', 'oldvalue', '`oldvalue`', '`oldvalue`', 201, -1, -1, FALSE, '`oldvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->oldvalue->Sortable = TRUE; // Allow sort
-		$this->fields['oldvalue'] = &$this->oldvalue;
-
-		// newvalue
-		$this->newvalue = new DbField('t204_audittrail', 't204_audittrail', 'x_newvalue', 'newvalue', '`newvalue`', '`newvalue`', 201, -1, -1, FALSE, '`newvalue`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
-		$this->newvalue->Sortable = TRUE; // Allow sort
-		$this->fields['newvalue'] = &$this->newvalue;
+		// remarks
+		$this->remarks = new DbField('t102_ho_detail', 't102_ho_detail', 'x_remarks', 'remarks', '`remarks`', '`remarks`', 201, 65535, -1, FALSE, '`remarks`', FALSE, FALSE, FALSE, 'FORMATTED TEXT', 'TEXTAREA');
+		$this->remarks->Sortable = TRUE; // Allow sort
+		$this->fields['remarks'] = &$this->remarks;
 	}
 
 	// Field Visibility
@@ -184,10 +193,62 @@ class t204_audittrail extends DbTable
 		}
 	}
 
+	// Current master table name
+	public function getCurrentMasterTable()
+	{
+		return @$_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_MASTER_TABLE")];
+	}
+	public function setCurrentMasterTable($v)
+	{
+		$_SESSION[PROJECT_NAME . "_" . $this->TableVar . "_" . Config("TABLE_MASTER_TABLE")] = $v;
+	}
+
+	// Session master WHERE clause
+	public function getMasterFilter()
+	{
+
+		// Master filter
+		$masterFilter = "";
+		if ($this->getCurrentMasterTable() == "t101_ho_head") {
+			if ($this->hohead_id->getSessionValue() != "")
+				$masterFilter .= "`id`=" . QuotedValue($this->hohead_id->getSessionValue(), DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $masterFilter;
+	}
+
+	// Session detail WHERE clause
+	public function getDetailFilter()
+	{
+
+		// Detail filter
+		$detailFilter = "";
+		if ($this->getCurrentMasterTable() == "t101_ho_head") {
+			if ($this->hohead_id->getSessionValue() != "")
+				$detailFilter .= "`hohead_id`=" . QuotedValue($this->hohead_id->getSessionValue(), DATATYPE_NUMBER, "DB");
+			else
+				return "";
+		}
+		return $detailFilter;
+	}
+
+	// Master filter
+	public function sqlMasterFilter_t101_ho_head()
+	{
+		return "`id`=@id@";
+	}
+
+	// Detail filter
+	public function sqlDetailFilter_t101_ho_head()
+	{
+		return "`hohead_id`=@hohead_id@";
+	}
+
 	// Table level SQL
 	public function getSqlFrom() // From
 	{
-		return ($this->SqlFrom != "") ? $this->SqlFrom : "`t204_audittrail`";
+		return ($this->SqlFrom != "") ? $this->SqlFrom : "`t102_ho_detail`";
 	}
 	public function sqlFrom() // For backward compatibility
 	{
@@ -513,15 +574,14 @@ class t204_audittrail extends DbTable
 			return;
 		$row = is_array($rs) ? $rs : $rs->fields;
 		$this->id->DbValue = $row['id'];
-		$this->datetime->DbValue = $row['datetime'];
-		$this->script->DbValue = $row['script'];
-		$this->user->DbValue = $row['user'];
-		$this->_action->DbValue = $row['action'];
-		$this->_table->DbValue = $row['table'];
-		$this->field->DbValue = $row['field'];
-		$this->keyvalue->DbValue = $row['keyvalue'];
-		$this->oldvalue->DbValue = $row['oldvalue'];
-		$this->newvalue->DbValue = $row['newvalue'];
+		$this->hohead_id->DbValue = $row['hohead_id'];
+		$this->asset_id->DbValue = $row['asset_id'];
+		$this->proc_date->DbValue = $row['proc_date'];
+		$this->proc_ccost->DbValue = $row['proc_ccost'];
+		$this->dep_amount->DbValue = $row['dep_amount'];
+		$this->dep_ytd->DbValue = $row['dep_ytd'];
+		$this->nb_val->DbValue = $row['nb_val'];
+		$this->remarks->DbValue = $row['remarks'];
 	}
 
 	// Delete uploaded files
@@ -564,7 +624,7 @@ class t204_audittrail extends DbTable
 		if (@$_SESSION[$name] != "") {
 			return $_SESSION[$name];
 		} else {
-			return "t204_audittraillist.php";
+			return "t102_ho_detaillist.php";
 		}
 	}
 	public function setReturnUrl($v)
@@ -576,11 +636,11 @@ class t204_audittrail extends DbTable
 	public function getModalCaption($pageName)
 	{
 		global $Language;
-		if ($pageName == "t204_audittrailview.php")
+		if ($pageName == "t102_ho_detailview.php")
 			return $Language->phrase("View");
-		elseif ($pageName == "t204_audittrailedit.php")
+		elseif ($pageName == "t102_ho_detailedit.php")
 			return $Language->phrase("Edit");
-		elseif ($pageName == "t204_audittrailadd.php")
+		elseif ($pageName == "t102_ho_detailadd.php")
 			return $Language->phrase("Add");
 		else
 			return "";
@@ -589,16 +649,16 @@ class t204_audittrail extends DbTable
 	// List URL
 	public function getListUrl()
 	{
-		return "t204_audittraillist.php";
+		return "t102_ho_detaillist.php";
 	}
 
 	// View URL
 	public function getViewUrl($parm = "")
 	{
 		if ($parm != "")
-			$url = $this->keyUrl("t204_audittrailview.php", $this->getUrlParm($parm));
+			$url = $this->keyUrl("t102_ho_detailview.php", $this->getUrlParm($parm));
 		else
-			$url = $this->keyUrl("t204_audittrailview.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
+			$url = $this->keyUrl("t102_ho_detailview.php", $this->getUrlParm(Config("TABLE_SHOW_DETAIL") . "="));
 		return $this->addMasterUrl($url);
 	}
 
@@ -606,16 +666,16 @@ class t204_audittrail extends DbTable
 	public function getAddUrl($parm = "")
 	{
 		if ($parm != "")
-			$url = "t204_audittrailadd.php?" . $this->getUrlParm($parm);
+			$url = "t102_ho_detailadd.php?" . $this->getUrlParm($parm);
 		else
-			$url = "t204_audittrailadd.php";
+			$url = "t102_ho_detailadd.php";
 		return $this->addMasterUrl($url);
 	}
 
 	// Edit URL
 	public function getEditUrl($parm = "")
 	{
-		$url = $this->keyUrl("t204_audittrailedit.php", $this->getUrlParm($parm));
+		$url = $this->keyUrl("t102_ho_detailedit.php", $this->getUrlParm($parm));
 		return $this->addMasterUrl($url);
 	}
 
@@ -629,7 +689,7 @@ class t204_audittrail extends DbTable
 	// Copy URL
 	public function getCopyUrl($parm = "")
 	{
-		$url = $this->keyUrl("t204_audittrailadd.php", $this->getUrlParm($parm));
+		$url = $this->keyUrl("t102_ho_detailadd.php", $this->getUrlParm($parm));
 		return $this->addMasterUrl($url);
 	}
 
@@ -643,12 +703,16 @@ class t204_audittrail extends DbTable
 	// Delete URL
 	public function getDeleteUrl()
 	{
-		return $this->keyUrl("t204_audittraildelete.php", $this->getUrlParm());
+		return $this->keyUrl("t102_ho_detaildelete.php", $this->getUrlParm());
 	}
 
 	// Add master url
 	public function addMasterUrl($url)
 	{
+		if ($this->getCurrentMasterTable() == "t101_ho_head" && !ContainsString($url, Config("TABLE_SHOW_MASTER") . "=")) {
+			$url .= (ContainsString($url, "?") ? "&" : "?") . Config("TABLE_SHOW_MASTER") . "=" . $this->getCurrentMasterTable();
+			$url .= "&fk_id=" . urlencode($this->hohead_id->CurrentValue);
+		}
 		return $url;
 	}
 	public function keyToJson($htmlEncode = FALSE)
@@ -753,15 +817,14 @@ class t204_audittrail extends DbTable
 	public function loadListRowValues(&$rs)
 	{
 		$this->id->setDbValue($rs->fields('id'));
-		$this->datetime->setDbValue($rs->fields('datetime'));
-		$this->script->setDbValue($rs->fields('script'));
-		$this->user->setDbValue($rs->fields('user'));
-		$this->_action->setDbValue($rs->fields('action'));
-		$this->_table->setDbValue($rs->fields('table'));
-		$this->field->setDbValue($rs->fields('field'));
-		$this->keyvalue->setDbValue($rs->fields('keyvalue'));
-		$this->oldvalue->setDbValue($rs->fields('oldvalue'));
-		$this->newvalue->setDbValue($rs->fields('newvalue'));
+		$this->hohead_id->setDbValue($rs->fields('hohead_id'));
+		$this->asset_id->setDbValue($rs->fields('asset_id'));
+		$this->proc_date->setDbValue($rs->fields('proc_date'));
+		$this->proc_ccost->setDbValue($rs->fields('proc_ccost'));
+		$this->dep_amount->setDbValue($rs->fields('dep_amount'));
+		$this->dep_ytd->setDbValue($rs->fields('dep_ytd'));
+		$this->nb_val->setDbValue($rs->fields('nb_val'));
+		$this->remarks->setDbValue($rs->fields('remarks'));
 	}
 
 	// Render list row values
@@ -774,106 +837,102 @@ class t204_audittrail extends DbTable
 
 		// Common render codes
 		// id
-		// datetime
-		// script
-		// user
-		// action
-		// table
-		// field
-		// keyvalue
-		// oldvalue
-		// newvalue
+		// hohead_id
+		// asset_id
+		// proc_date
+		// proc_ccost
+		// dep_amount
+		// dep_ytd
+		// nb_val
+		// remarks
 		// id
 
 		$this->id->ViewValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->ViewValue = $this->datetime->CurrentValue;
-		$this->datetime->ViewValue = FormatDateTime($this->datetime->ViewValue, 0);
-		$this->datetime->ViewCustomAttributes = "";
+		// hohead_id
+		$this->hohead_id->ViewValue = $this->hohead_id->CurrentValue;
+		$this->hohead_id->ViewValue = FormatNumber($this->hohead_id->ViewValue, 0, -2, -2, -2);
+		$this->hohead_id->ViewCustomAttributes = "";
 
-		// script
-		$this->script->ViewValue = $this->script->CurrentValue;
-		$this->script->ViewCustomAttributes = "";
+		// asset_id
+		$this->asset_id->ViewValue = $this->asset_id->CurrentValue;
+		$this->asset_id->ViewValue = FormatNumber($this->asset_id->ViewValue, 0, -2, -2, -2);
+		$this->asset_id->ViewCustomAttributes = "";
 
-		// user
-		$this->user->ViewValue = $this->user->CurrentValue;
-		$this->user->ViewCustomAttributes = "";
+		// proc_date
+		$this->proc_date->ViewValue = $this->proc_date->CurrentValue;
+		$this->proc_date->ViewValue = FormatDateTime($this->proc_date->ViewValue, 0);
+		$this->proc_date->ViewCustomAttributes = "";
 
-		// action
-		$this->_action->ViewValue = $this->_action->CurrentValue;
-		$this->_action->ViewCustomAttributes = "";
+		// proc_ccost
+		$this->proc_ccost->ViewValue = $this->proc_ccost->CurrentValue;
+		$this->proc_ccost->ViewValue = FormatNumber($this->proc_ccost->ViewValue, 2, -2, -2, -2);
+		$this->proc_ccost->ViewCustomAttributes = "";
 
-		// table
-		$this->_table->ViewValue = $this->_table->CurrentValue;
-		$this->_table->ViewCustomAttributes = "";
+		// dep_amount
+		$this->dep_amount->ViewValue = $this->dep_amount->CurrentValue;
+		$this->dep_amount->ViewValue = FormatNumber($this->dep_amount->ViewValue, 2, -2, -2, -2);
+		$this->dep_amount->ViewCustomAttributes = "";
 
-		// field
-		$this->field->ViewValue = $this->field->CurrentValue;
-		$this->field->ViewCustomAttributes = "";
+		// dep_ytd
+		$this->dep_ytd->ViewValue = $this->dep_ytd->CurrentValue;
+		$this->dep_ytd->ViewValue = FormatNumber($this->dep_ytd->ViewValue, 2, -2, -2, -2);
+		$this->dep_ytd->ViewCustomAttributes = "";
 
-		// keyvalue
-		$this->keyvalue->ViewValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->ViewCustomAttributes = "";
+		// nb_val
+		$this->nb_val->ViewValue = $this->nb_val->CurrentValue;
+		$this->nb_val->ViewValue = FormatNumber($this->nb_val->ViewValue, 2, -2, -2, -2);
+		$this->nb_val->ViewCustomAttributes = "";
 
-		// oldvalue
-		$this->oldvalue->ViewValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->ViewCustomAttributes = "";
-
-		// newvalue
-		$this->newvalue->ViewValue = $this->newvalue->CurrentValue;
-		$this->newvalue->ViewCustomAttributes = "";
+		// remarks
+		$this->remarks->ViewValue = $this->remarks->CurrentValue;
+		$this->remarks->ViewCustomAttributes = "";
 
 		// id
 		$this->id->LinkCustomAttributes = "";
 		$this->id->HrefValue = "";
 		$this->id->TooltipValue = "";
 
-		// datetime
-		$this->datetime->LinkCustomAttributes = "";
-		$this->datetime->HrefValue = "";
-		$this->datetime->TooltipValue = "";
+		// hohead_id
+		$this->hohead_id->LinkCustomAttributes = "";
+		$this->hohead_id->HrefValue = "";
+		$this->hohead_id->TooltipValue = "";
 
-		// script
-		$this->script->LinkCustomAttributes = "";
-		$this->script->HrefValue = "";
-		$this->script->TooltipValue = "";
+		// asset_id
+		$this->asset_id->LinkCustomAttributes = "";
+		$this->asset_id->HrefValue = "";
+		$this->asset_id->TooltipValue = "";
 
-		// user
-		$this->user->LinkCustomAttributes = "";
-		$this->user->HrefValue = "";
-		$this->user->TooltipValue = "";
+		// proc_date
+		$this->proc_date->LinkCustomAttributes = "";
+		$this->proc_date->HrefValue = "";
+		$this->proc_date->TooltipValue = "";
 
-		// action
-		$this->_action->LinkCustomAttributes = "";
-		$this->_action->HrefValue = "";
-		$this->_action->TooltipValue = "";
+		// proc_ccost
+		$this->proc_ccost->LinkCustomAttributes = "";
+		$this->proc_ccost->HrefValue = "";
+		$this->proc_ccost->TooltipValue = "";
 
-		// table
-		$this->_table->LinkCustomAttributes = "";
-		$this->_table->HrefValue = "";
-		$this->_table->TooltipValue = "";
+		// dep_amount
+		$this->dep_amount->LinkCustomAttributes = "";
+		$this->dep_amount->HrefValue = "";
+		$this->dep_amount->TooltipValue = "";
 
-		// field
-		$this->field->LinkCustomAttributes = "";
-		$this->field->HrefValue = "";
-		$this->field->TooltipValue = "";
+		// dep_ytd
+		$this->dep_ytd->LinkCustomAttributes = "";
+		$this->dep_ytd->HrefValue = "";
+		$this->dep_ytd->TooltipValue = "";
 
-		// keyvalue
-		$this->keyvalue->LinkCustomAttributes = "";
-		$this->keyvalue->HrefValue = "";
-		$this->keyvalue->TooltipValue = "";
+		// nb_val
+		$this->nb_val->LinkCustomAttributes = "";
+		$this->nb_val->HrefValue = "";
+		$this->nb_val->TooltipValue = "";
 
-		// oldvalue
-		$this->oldvalue->LinkCustomAttributes = "";
-		$this->oldvalue->HrefValue = "";
-		$this->oldvalue->TooltipValue = "";
-
-		// newvalue
-		$this->newvalue->LinkCustomAttributes = "";
-		$this->newvalue->HrefValue = "";
-		$this->newvalue->TooltipValue = "";
+		// remarks
+		$this->remarks->LinkCustomAttributes = "";
+		$this->remarks->HrefValue = "";
+		$this->remarks->TooltipValue = "";
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -896,69 +955,72 @@ class t204_audittrail extends DbTable
 		$this->id->EditValue = $this->id->CurrentValue;
 		$this->id->ViewCustomAttributes = "";
 
-		// datetime
-		$this->datetime->EditAttrs["class"] = "form-control";
-		$this->datetime->EditCustomAttributes = "";
-		$this->datetime->EditValue = FormatDateTime($this->datetime->CurrentValue, 8);
-		$this->datetime->PlaceHolder = RemoveHtml($this->datetime->caption());
+		// hohead_id
+		$this->hohead_id->EditAttrs["class"] = "form-control";
+		$this->hohead_id->EditCustomAttributes = "";
+		if ($this->hohead_id->getSessionValue() != "") {
+			$this->hohead_id->CurrentValue = $this->hohead_id->getSessionValue();
+			$this->hohead_id->ViewValue = $this->hohead_id->CurrentValue;
+			$this->hohead_id->ViewValue = FormatNumber($this->hohead_id->ViewValue, 0, -2, -2, -2);
+			$this->hohead_id->ViewCustomAttributes = "";
+		} else {
+			$this->hohead_id->EditValue = $this->hohead_id->CurrentValue;
+			$this->hohead_id->PlaceHolder = RemoveHtml($this->hohead_id->caption());
+		}
 
-		// script
-		$this->script->EditAttrs["class"] = "form-control";
-		$this->script->EditCustomAttributes = "";
-		if (!$this->script->Raw)
-			$this->script->CurrentValue = HtmlDecode($this->script->CurrentValue);
-		$this->script->EditValue = $this->script->CurrentValue;
-		$this->script->PlaceHolder = RemoveHtml($this->script->caption());
+		// asset_id
+		$this->asset_id->EditAttrs["class"] = "form-control";
+		$this->asset_id->EditCustomAttributes = "";
+		$this->asset_id->EditValue = $this->asset_id->CurrentValue;
+		$this->asset_id->PlaceHolder = RemoveHtml($this->asset_id->caption());
 
-		// user
-		$this->user->EditAttrs["class"] = "form-control";
-		$this->user->EditCustomAttributes = "";
-		if (!$this->user->Raw)
-			$this->user->CurrentValue = HtmlDecode($this->user->CurrentValue);
-		$this->user->EditValue = $this->user->CurrentValue;
-		$this->user->PlaceHolder = RemoveHtml($this->user->caption());
+		// proc_date
+		$this->proc_date->EditAttrs["class"] = "form-control";
+		$this->proc_date->EditCustomAttributes = "";
+		$this->proc_date->EditValue = FormatDateTime($this->proc_date->CurrentValue, 8);
+		$this->proc_date->PlaceHolder = RemoveHtml($this->proc_date->caption());
 
-		// action
-		$this->_action->EditAttrs["class"] = "form-control";
-		$this->_action->EditCustomAttributes = "";
-		if (!$this->_action->Raw)
-			$this->_action->CurrentValue = HtmlDecode($this->_action->CurrentValue);
-		$this->_action->EditValue = $this->_action->CurrentValue;
-		$this->_action->PlaceHolder = RemoveHtml($this->_action->caption());
+		// proc_ccost
+		$this->proc_ccost->EditAttrs["class"] = "form-control";
+		$this->proc_ccost->EditCustomAttributes = "";
+		$this->proc_ccost->EditValue = $this->proc_ccost->CurrentValue;
+		$this->proc_ccost->PlaceHolder = RemoveHtml($this->proc_ccost->caption());
+		if (strval($this->proc_ccost->EditValue) != "" && is_numeric($this->proc_ccost->EditValue))
+			$this->proc_ccost->EditValue = FormatNumber($this->proc_ccost->EditValue, -2, -2, -2, -2);
+		
 
-		// table
-		$this->_table->EditAttrs["class"] = "form-control";
-		$this->_table->EditCustomAttributes = "";
-		if (!$this->_table->Raw)
-			$this->_table->CurrentValue = HtmlDecode($this->_table->CurrentValue);
-		$this->_table->EditValue = $this->_table->CurrentValue;
-		$this->_table->PlaceHolder = RemoveHtml($this->_table->caption());
+		// dep_amount
+		$this->dep_amount->EditAttrs["class"] = "form-control";
+		$this->dep_amount->EditCustomAttributes = "";
+		$this->dep_amount->EditValue = $this->dep_amount->CurrentValue;
+		$this->dep_amount->PlaceHolder = RemoveHtml($this->dep_amount->caption());
+		if (strval($this->dep_amount->EditValue) != "" && is_numeric($this->dep_amount->EditValue))
+			$this->dep_amount->EditValue = FormatNumber($this->dep_amount->EditValue, -2, -2, -2, -2);
+		
 
-		// field
-		$this->field->EditAttrs["class"] = "form-control";
-		$this->field->EditCustomAttributes = "";
-		if (!$this->field->Raw)
-			$this->field->CurrentValue = HtmlDecode($this->field->CurrentValue);
-		$this->field->EditValue = $this->field->CurrentValue;
-		$this->field->PlaceHolder = RemoveHtml($this->field->caption());
+		// dep_ytd
+		$this->dep_ytd->EditAttrs["class"] = "form-control";
+		$this->dep_ytd->EditCustomAttributes = "";
+		$this->dep_ytd->EditValue = $this->dep_ytd->CurrentValue;
+		$this->dep_ytd->PlaceHolder = RemoveHtml($this->dep_ytd->caption());
+		if (strval($this->dep_ytd->EditValue) != "" && is_numeric($this->dep_ytd->EditValue))
+			$this->dep_ytd->EditValue = FormatNumber($this->dep_ytd->EditValue, -2, -2, -2, -2);
+		
 
-		// keyvalue
-		$this->keyvalue->EditAttrs["class"] = "form-control";
-		$this->keyvalue->EditCustomAttributes = "";
-		$this->keyvalue->EditValue = $this->keyvalue->CurrentValue;
-		$this->keyvalue->PlaceHolder = RemoveHtml($this->keyvalue->caption());
+		// nb_val
+		$this->nb_val->EditAttrs["class"] = "form-control";
+		$this->nb_val->EditCustomAttributes = "";
+		$this->nb_val->EditValue = $this->nb_val->CurrentValue;
+		$this->nb_val->PlaceHolder = RemoveHtml($this->nb_val->caption());
+		if (strval($this->nb_val->EditValue) != "" && is_numeric($this->nb_val->EditValue))
+			$this->nb_val->EditValue = FormatNumber($this->nb_val->EditValue, -2, -2, -2, -2);
+		
 
-		// oldvalue
-		$this->oldvalue->EditAttrs["class"] = "form-control";
-		$this->oldvalue->EditCustomAttributes = "";
-		$this->oldvalue->EditValue = $this->oldvalue->CurrentValue;
-		$this->oldvalue->PlaceHolder = RemoveHtml($this->oldvalue->caption());
-
-		// newvalue
-		$this->newvalue->EditAttrs["class"] = "form-control";
-		$this->newvalue->EditCustomAttributes = "";
-		$this->newvalue->EditValue = $this->newvalue->CurrentValue;
-		$this->newvalue->PlaceHolder = RemoveHtml($this->newvalue->caption());
+		// remarks
+		$this->remarks->EditAttrs["class"] = "form-control";
+		$this->remarks->EditCustomAttributes = "";
+		$this->remarks->EditValue = $this->remarks->CurrentValue;
+		$this->remarks->PlaceHolder = RemoveHtml($this->remarks->caption());
 
 		// Call Row Rendered event
 		$this->Row_Rendered();
@@ -989,24 +1051,23 @@ class t204_audittrail extends DbTable
 			if ($doc->Horizontal) { // Horizontal format, write header
 				$doc->beginExportRow();
 				if ($exportPageType == "view") {
-					$doc->exportCaption($this->id);
-					$doc->exportCaption($this->datetime);
-					$doc->exportCaption($this->script);
-					$doc->exportCaption($this->user);
-					$doc->exportCaption($this->_action);
-					$doc->exportCaption($this->_table);
-					$doc->exportCaption($this->field);
-					$doc->exportCaption($this->keyvalue);
-					$doc->exportCaption($this->oldvalue);
-					$doc->exportCaption($this->newvalue);
+					$doc->exportCaption($this->hohead_id);
+					$doc->exportCaption($this->asset_id);
+					$doc->exportCaption($this->proc_date);
+					$doc->exportCaption($this->proc_ccost);
+					$doc->exportCaption($this->dep_amount);
+					$doc->exportCaption($this->dep_ytd);
+					$doc->exportCaption($this->nb_val);
+					$doc->exportCaption($this->remarks);
 				} else {
 					$doc->exportCaption($this->id);
-					$doc->exportCaption($this->datetime);
-					$doc->exportCaption($this->script);
-					$doc->exportCaption($this->user);
-					$doc->exportCaption($this->_action);
-					$doc->exportCaption($this->_table);
-					$doc->exportCaption($this->field);
+					$doc->exportCaption($this->hohead_id);
+					$doc->exportCaption($this->asset_id);
+					$doc->exportCaption($this->proc_date);
+					$doc->exportCaption($this->proc_ccost);
+					$doc->exportCaption($this->dep_amount);
+					$doc->exportCaption($this->dep_ytd);
+					$doc->exportCaption($this->nb_val);
 				}
 				$doc->endExportRow();
 			}
@@ -1038,24 +1099,23 @@ class t204_audittrail extends DbTable
 				if (!$doc->ExportCustom) {
 					$doc->beginExportRow($rowCnt); // Allow CSS styles if enabled
 					if ($exportPageType == "view") {
-						$doc->exportField($this->id);
-						$doc->exportField($this->datetime);
-						$doc->exportField($this->script);
-						$doc->exportField($this->user);
-						$doc->exportField($this->_action);
-						$doc->exportField($this->_table);
-						$doc->exportField($this->field);
-						$doc->exportField($this->keyvalue);
-						$doc->exportField($this->oldvalue);
-						$doc->exportField($this->newvalue);
+						$doc->exportField($this->hohead_id);
+						$doc->exportField($this->asset_id);
+						$doc->exportField($this->proc_date);
+						$doc->exportField($this->proc_ccost);
+						$doc->exportField($this->dep_amount);
+						$doc->exportField($this->dep_ytd);
+						$doc->exportField($this->nb_val);
+						$doc->exportField($this->remarks);
 					} else {
 						$doc->exportField($this->id);
-						$doc->exportField($this->datetime);
-						$doc->exportField($this->script);
-						$doc->exportField($this->user);
-						$doc->exportField($this->_action);
-						$doc->exportField($this->_table);
-						$doc->exportField($this->field);
+						$doc->exportField($this->hohead_id);
+						$doc->exportField($this->asset_id);
+						$doc->exportField($this->proc_date);
+						$doc->exportField($this->proc_ccost);
+						$doc->exportField($this->dep_amount);
+						$doc->exportField($this->dep_ytd);
+						$doc->exportField($this->nb_val);
 					}
 					$doc->endExportRow($rowCnt);
 				}
@@ -1082,7 +1142,7 @@ class t204_audittrail extends DbTable
 	// Write Audit Trail start/end for grid update
 	public function writeAuditTrailDummy($typ)
 	{
-		$table = 't204_audittrail';
+		$table = 't102_ho_detail';
 		$usr = CurrentUserID();
 		WriteAuditTrail("log", DbCurrentDateTime(), ScriptName(), $usr, $typ, $table, "", "", "", "");
 	}
@@ -1093,7 +1153,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnAdd)
 			return;
-		$table = 't204_audittrail';
+		$table = 't102_ho_detail';
 
 		// Get key value
 		$key = "";
@@ -1130,7 +1190,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnEdit)
 			return;
-		$table = 't204_audittrail';
+		$table = 't102_ho_detail';
 
 		// Get key value
 		$key = "";
@@ -1180,7 +1240,7 @@ class t204_audittrail extends DbTable
 		global $Language;
 		if (!$this->AuditTrailOnDelete)
 			return;
-		$table = 't204_audittrail';
+		$table = 't102_ho_detail';
 
 		// Get key value
 		$key = "";

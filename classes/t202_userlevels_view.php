@@ -51,6 +51,14 @@ class t202_userlevels_view extends t202_userlevels
 	public $MultiDeleteUrl;
 	public $MultiUpdateUrl;
 
+	// Audit Trail
+	public $AuditTrailOnAdd = TRUE;
+	public $AuditTrailOnEdit = TRUE;
+	public $AuditTrailOnDelete = TRUE;
+	public $AuditTrailOnView = FALSE;
+	public $AuditTrailOnViewData = FALSE;
+	public $AuditTrailOnSearch = FALSE;
+
 	// Page headings
 	public $Heading = "";
 	public $Subheading = "";
@@ -926,6 +934,8 @@ class t202_userlevels_view extends t202_userlevels
 		$this->Row_Selected($row);
 		if (!$rs || $rs->EOF)
 			return;
+		if ($this->AuditTrailOnView)
+			$this->writeAuditTrailOnView($row);
 		$this->userlevelid->setDbValue($row['userlevelid']);
 		$this->userlevelid->CurrentValue = (int)$this->userlevelid->CurrentValue;
 		$this->userlevelname->setDbValue($row['userlevelname']);

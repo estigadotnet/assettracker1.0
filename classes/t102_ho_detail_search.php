@@ -4,20 +4,20 @@ namespace PHPMaker2020\p_assettracker1_0;
 /**
  * Page class
  */
-class t202_userlevels_add extends t202_userlevels
+class t102_ho_detail_search extends t102_ho_detail
 {
 
 	// Page ID
-	public $PageID = "add";
+	public $PageID = "search";
 
 	// Project ID
 	public $ProjectID = "{A1916BF1-858E-4493-B275-C510122AD7E3}";
 
 	// Table name
-	public $TableName = 't202_userlevels';
+	public $TableName = 't102_ho_detail';
 
 	// Page object name
-	public $PageObjName = "t202_userlevels_add";
+	public $PageObjName = "t102_ho_detail_search";
 
 	// Audit Trail
 	public $AuditTrailOnAdd = TRUE;
@@ -349,11 +349,15 @@ class t202_userlevels_add extends t202_userlevels
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t202_userlevels)
-		if (!isset($GLOBALS["t202_userlevels"]) || get_class($GLOBALS["t202_userlevels"]) == PROJECT_NAMESPACE . "t202_userlevels") {
-			$GLOBALS["t202_userlevels"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t202_userlevels"];
+		// Table object (t102_ho_detail)
+		if (!isset($GLOBALS["t102_ho_detail"]) || get_class($GLOBALS["t102_ho_detail"]) == PROJECT_NAMESPACE . "t102_ho_detail") {
+			$GLOBALS["t102_ho_detail"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t102_ho_detail"];
 		}
+
+		// Table object (t101_ho_head)
+		if (!isset($GLOBALS['t101_ho_head']))
+			$GLOBALS['t101_ho_head'] = new t101_ho_head();
 
 		// Table object (t201_users)
 		if (!isset($GLOBALS['t201_users']))
@@ -361,11 +365,11 @@ class t202_userlevels_add extends t202_userlevels
 
 		// Page ID (for backward compatibility only)
 		if (!defined(PROJECT_NAMESPACE . "PAGE_ID"))
-			define(PROJECT_NAMESPACE . "PAGE_ID", 'add');
+			define(PROJECT_NAMESPACE . "PAGE_ID", 'search');
 
 		// Table name (for backward compatibility only)
 		if (!defined(PROJECT_NAMESPACE . "TABLE_NAME"))
-			define(PROJECT_NAMESPACE . "TABLE_NAME", 't202_userlevels');
+			define(PROJECT_NAMESPACE . "TABLE_NAME", 't102_ho_detail');
 
 		// Start timer
 		if (!isset($GLOBALS["DebugTimer"]))
@@ -394,14 +398,14 @@ class t202_userlevels_add extends t202_userlevels
 		Page_Unloaded();
 
 		// Export
-		global $t202_userlevels;
+		global $t102_ho_detail;
 		if ($this->CustomExport && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, Config("EXPORT_CLASSES"))) {
 				$content = ob_get_contents();
 			if ($ExportFileName == "")
 				$ExportFileName = $this->TableVar;
 			$class = PROJECT_NAMESPACE . Config("EXPORT_CLASSES." . $this->CustomExport);
 			if (class_exists($class)) {
-				$doc = new $class($t202_userlevels);
+				$doc = new $class($t102_ho_detail);
 				$doc->Text = @$content;
 				if ($this->isExport("email"))
 					echo $this->exportEmail($doc->Text);
@@ -436,7 +440,7 @@ class t202_userlevels_add extends t202_userlevels
 				$pageName = GetPageName($url);
 				if ($pageName != $this->getListUrl()) { // Not List page
 					$row["caption"] = $this->getModalCaption($pageName);
-					if ($pageName == "t202_userlevelsview.php")
+					if ($pageName == "t102_ho_detailview.php")
 						$row["view"] = "1";
 				} else { // List page should not be shown as modal => error
 					$row["error"] = $this->getFailureMessage();
@@ -527,7 +531,7 @@ class t202_userlevels_add extends t202_userlevels
 	{
 		$key = "";
 		if (is_array($ar)) {
-			$key .= @$ar['userlevelid'];
+			$key .= @$ar['id'];
 		}
 		return $key;
 	}
@@ -539,6 +543,8 @@ class t202_userlevels_add extends t202_userlevels
 	 */
 	protected function hideFieldsForAddEdit()
 	{
+		if ($this->isAdd() || $this->isCopy() || $this->isGridAdd())
+			$this->id->Visible = FALSE;
 	}
 
 	// Lookup data
@@ -628,15 +634,9 @@ class t202_userlevels_add extends t202_userlevels
 		$Security->loadUserID();
 		$Security->UserID_Loaded();
 	}
-	public $FormClassName = "ew-horizontal ew-form ew-add-form";
+	public $FormClassName = "ew-horizontal ew-form ew-search-form";
 	public $IsModal = FALSE;
 	public $IsMobileOrModal = FALSE;
-	public $DbMasterFilter = "";
-	public $DbDetailFilter = "";
-	public $StartRecord;
-	public $Priv = 0;
-	public $OldRecordset;
-	public $CopyRecord;
 
 	//
 	// Page run
@@ -645,7 +645,7 @@ class t202_userlevels_add extends t202_userlevels
 	public function run()
 	{
 		global $ExportType, $CustomExportType, $ExportFileName, $UserProfile, $Language, $Security, $CurrentForm,
-			$FormError, $SkipHeaderFooter;
+			$SearchError, $SkipHeaderFooter;
 
 		// Is modal
 		$this->IsModal = (Param("modal") == "1");
@@ -656,10 +656,6 @@ class t202_userlevels_add extends t202_userlevels
 		// Security
 		if (ValidApiRequest()) { // API request
 			$this->setupApiSecurity(); // Set up API Security
-			if (!$Security->canAdd()) {
-				SetStatus(401); // Unauthorized
-				return;
-			}
 		} else {
 			$Security = new AdvancedSecurity();
 			if (!$Security->isLoggedIn())
@@ -669,11 +665,11 @@ class t202_userlevels_add extends t202_userlevels
 			$Security->loadCurrentUserLevel($this->ProjectID . $this->TableName);
 			if ($Security->isLoggedIn())
 				$Security->TablePermission_Loaded();
-			if (!$Security->canAdd()) {
+			if (!$Security->canSearch()) {
 				$Security->saveLastUrl();
 				$this->setFailureMessage(DeniedMessage()); // Set no permission
 				if ($Security->canList())
-					$this->terminate(GetUrl("t202_userlevelslist.php"));
+					$this->terminate(GetUrl("t102_ho_detaillist.php"));
 				else
 					$this->terminate(GetUrl("login.php"));
 				return;
@@ -688,8 +684,15 @@ class t202_userlevels_add extends t202_userlevels
 		// Create form object
 		$CurrentForm = new HttpForm();
 		$this->CurrentAction = Param("action"); // Set up current action
-		$this->userlevelid->setVisibility();
-		$this->userlevelname->setVisibility();
+		$this->id->Visible = FALSE;
+		$this->hohead_id->setVisibility();
+		$this->asset_id->setVisibility();
+		$this->proc_date->setVisibility();
+		$this->proc_ccost->setVisibility();
+		$this->dep_amount->setVisibility();
+		$this->dep_ytd->setVisibility();
+		$this->nb_val->setVisibility();
+		$this->remarks->setVisibility();
 		$this->hideFieldsForAddEdit();
 
 		// Do not use lookup cache
@@ -711,244 +714,147 @@ class t202_userlevels_add extends t202_userlevels
 		$this->createToken();
 
 		// Set up lookup cache
-		// Check permission
+		// Set up Breadcrumb
 
-		if (!$Security->canAdd()) {
-			$this->setFailureMessage(DeniedMessage()); // No permission
-			$this->terminate("t202_userlevelslist.php");
-			return;
-		}
+		$this->setupBreadcrumb();
 
 		// Check modal
 		if ($this->IsModal)
 			$SkipHeaderFooter = TRUE;
 		$this->IsMobileOrModal = IsMobile() || $this->IsModal;
-		$this->FormClassName = "ew-form ew-add-form ew-horizontal";
-		$postBack = FALSE;
+		if ($this->isPageRequest()) { // Validate request
 
-		// Set up current action
-		if (IsApi()) {
-			$this->CurrentAction = "insert"; // Add record directly
-			$postBack = TRUE;
-		} elseif (Post("action") !== NULL) {
-			$this->CurrentAction = Post("action"); // Get form action
-			$postBack = TRUE;
-		} else { // Not post back
+			// Get action
+			$this->CurrentAction = Post("action");
+			if ($this->isSearch()) {
 
-			// Load key values from QueryString
-			$this->CopyRecord = TRUE;
-			if (Get("userlevelid") !== NULL) {
-				$this->userlevelid->setQueryStringValue(Get("userlevelid"));
-				$this->setKey("userlevelid", $this->userlevelid->CurrentValue); // Set up key
-			} else {
-				$this->setKey("userlevelid", ""); // Clear key
-				$this->CopyRecord = FALSE;
-			}
-			if ($this->CopyRecord) {
-				$this->CurrentAction = "copy"; // Copy record
-			} else {
-				$this->CurrentAction = "show"; // Display blank record
-			}
-		}
-
-		// Load old record / default values
-		$loaded = $this->loadOldRecord();
-
-		// Load form values
-		if ($postBack) {
-			$this->loadFormValues(); // Load form values
-
-			// Load values for user privileges
-			$allowAdd = (int)Post("x__AllowAdd");
-			$allowEdit = (int)Post("x__AllowEdit");
-			$allowDelete = (int)Post("x__AllowDelete");
-			$allowList = (int)Post("x__AllowList");
-			$allowView = (int)Post("x__AllowView");
-			$allowSearch = (int)Post("x__AllowSearch");
-			$allowLookup = (int)Post("x__AllowLookup");
-			$this->Priv = $allowAdd + $allowEdit + $allowDelete + $allowList + $allowView + $allowSearch + $allowLookup;
-		}
-
-		// Validate form if post back
-		if ($postBack) {
-			if (!$this->validateForm()) {
-				$this->EventCancelled = TRUE; // Event cancelled
-				$this->restoreFormValues(); // Restore form values
-				$this->setFailureMessage($FormError);
-				if (IsApi()) {
-					$this->terminate();
-					return;
+				// Build search string for advanced search, remove blank field
+				$this->loadSearchValues(); // Get search values
+				if ($this->validateSearch()) {
+					$srchStr = $this->buildAdvancedSearch();
 				} else {
-					$this->CurrentAction = "show"; // Form error, reset action
+					$srchStr = "";
+					$this->setFailureMessage($SearchError);
+				}
+				if ($srchStr != "") {
+					$srchStr = $this->getUrlParm($srchStr);
+					$srchStr = "t102_ho_detaillist.php" . "?" . $srchStr;
+					$this->terminate($srchStr); // Go to list page
 				}
 			}
 		}
 
-		// Perform current action
-		switch ($this->CurrentAction) {
-			case "copy": // Copy an existing record
-				if (!$loaded) { // Record not loaded
-					if ($this->getFailureMessage() == "")
-						$this->setFailureMessage($Language->phrase("NoRecord")); // No record found
-					$this->terminate("t202_userlevelslist.php"); // No matching record, return to list
-				}
-				break;
-			case "insert": // Add new record
-				$this->SendEmail = TRUE; // Send email on add success
-				if ($this->addRow($this->OldRecordset)) { // Add successful
-					if ($this->getSuccessMessage() == "")
-						$this->setSuccessMessage($Language->phrase("AddSuccess")); // Set up success message
-					$returnUrl = $this->getReturnUrl();
-					if (GetPageName($returnUrl) == "t202_userlevelslist.php")
-						$returnUrl = $this->addMasterUrl($returnUrl); // List page, return to List page with correct master key if necessary
-					elseif (GetPageName($returnUrl) == "t202_userlevelsview.php")
-						$returnUrl = $this->getViewUrl(); // View page, return to View page with keyurl directly
-					if (IsApi()) { // Return to caller
-						$this->terminate(TRUE);
-						return;
-					} else {
-						$this->terminate($returnUrl);
-					}
-				} elseif (IsApi()) { // API request, return
-					$this->terminate();
-					return;
-				} else {
-					$this->EventCancelled = TRUE; // Event cancelled
-					$this->restoreFormValues(); // Add failed, restore form values
-				}
-		}
+		// Restore search settings from Session
+		if ($SearchError == "")
+			$this->loadAdvancedSearch();
 
-		// Set up Breadcrumb
-		$this->setupBreadcrumb();
-
-		// Render row based on row type
-		$this->RowType = ROWTYPE_ADD; // Render add type
-
-		// Render row
+		// Render row for search
+		$this->RowType = ROWTYPE_SEARCH;
 		$this->resetAttributes();
 		$this->renderRow();
 	}
 
-	// Get upload files
-	protected function getUploadFiles()
+	// Build advanced search
+	protected function buildAdvancedSearch()
 	{
-		global $CurrentForm, $Language;
+		$srchUrl = "";
+		$this->buildSearchUrl($srchUrl, $this->hohead_id); // hohead_id
+		$this->buildSearchUrl($srchUrl, $this->asset_id); // asset_id
+		$this->buildSearchUrl($srchUrl, $this->proc_date); // proc_date
+		$this->buildSearchUrl($srchUrl, $this->proc_ccost); // proc_ccost
+		$this->buildSearchUrl($srchUrl, $this->dep_amount); // dep_amount
+		$this->buildSearchUrl($srchUrl, $this->dep_ytd); // dep_ytd
+		$this->buildSearchUrl($srchUrl, $this->nb_val); // nb_val
+		$this->buildSearchUrl($srchUrl, $this->remarks); // remarks
+		if ($srchUrl != "")
+			$srchUrl .= "&";
+		$srchUrl .= "cmd=search";
+		return $srchUrl;
 	}
 
-	// Load default values
-	protected function loadDefaultValues()
-	{
-		$this->userlevelid->CurrentValue = NULL;
-		$this->userlevelid->OldValue = $this->userlevelid->CurrentValue;
-		$this->userlevelname->CurrentValue = NULL;
-		$this->userlevelname->OldValue = $this->userlevelname->CurrentValue;
-	}
-
-	// Load form values
-	protected function loadFormValues()
-	{
-
-		// Load from form
-		global $CurrentForm;
-
-		// Check field name 'userlevelid' first before field var 'x_userlevelid'
-		$val = $CurrentForm->hasValue("userlevelid") ? $CurrentForm->getValue("userlevelid") : $CurrentForm->getValue("x_userlevelid");
-		if (!$this->userlevelid->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->userlevelid->Visible = FALSE; // Disable update for API request
-			else
-				$this->userlevelid->setFormValue($val);
-		}
-
-		// Check field name 'userlevelname' first before field var 'x_userlevelname'
-		$val = $CurrentForm->hasValue("userlevelname") ? $CurrentForm->getValue("userlevelname") : $CurrentForm->getValue("x_userlevelname");
-		if (!$this->userlevelname->IsDetailKey) {
-			if (IsApi() && $val == NULL)
-				$this->userlevelname->Visible = FALSE; // Disable update for API request
-			else
-				$this->userlevelname->setFormValue($val);
-		}
-	}
-
-	// Restore form values
-	public function restoreFormValues()
+	// Build search URL
+	protected function buildSearchUrl(&$url, &$fld, $oprOnly = FALSE)
 	{
 		global $CurrentForm;
-		$this->userlevelid->CurrentValue = $this->userlevelid->FormValue;
-		$this->userlevelname->CurrentValue = $this->userlevelname->FormValue;
-	}
-
-	// Load row based on key values
-	public function loadRow()
-	{
-		global $Security, $Language;
-		$filter = $this->getRecordFilter();
-
-		// Call Row Selecting event
-		$this->Row_Selecting($filter);
-
-		// Load SQL based on filter
-		$this->CurrentFilter = $filter;
-		$sql = $this->getCurrentSql();
-		$conn = $this->getConnection();
-		$res = FALSE;
-		$rs = LoadRecordset($sql, $conn);
-		if ($rs && !$rs->EOF) {
-			$res = TRUE;
-			$this->loadRowValues($rs); // Load row values
-			$rs->close();
+		$wrk = "";
+		$fldParm = $fld->Param;
+		$fldVal = $CurrentForm->getValue("x_$fldParm");
+		$fldOpr = $CurrentForm->getValue("z_$fldParm");
+		$fldCond = $CurrentForm->getValue("v_$fldParm");
+		$fldVal2 = $CurrentForm->getValue("y_$fldParm");
+		$fldOpr2 = $CurrentForm->getValue("w_$fldParm");
+		if (is_array($fldVal))
+			$fldVal = implode(Config("MULTIPLE_OPTION_SEPARATOR"), $fldVal);
+		if (is_array($fldVal2))
+			$fldVal2 = implode(Config("MULTIPLE_OPTION_SEPARATOR"), $fldVal2);
+		$fldOpr = strtoupper(trim($fldOpr));
+		$fldDataType = ($fld->IsVirtual) ? DATATYPE_STRING : $fld->DataType;
+		if ($fldOpr == "BETWEEN") {
+			$isValidValue = ($fldDataType != DATATYPE_NUMBER) ||
+				($fldDataType == DATATYPE_NUMBER && $this->searchValueIsNumeric($fld, $fldVal) && $this->searchValueIsNumeric($fld, $fldVal2));
+			if ($fldVal != "" && $fldVal2 != "" && $isValidValue) {
+				$wrk = "x_" . $fldParm . "=" . urlencode($fldVal) .
+					"&y_" . $fldParm . "=" . urlencode($fldVal2) .
+					"&z_" . $fldParm . "=" . urlencode($fldOpr);
+			}
+		} else {
+			$isValidValue = ($fldDataType != DATATYPE_NUMBER) ||
+				($fldDataType == DATATYPE_NUMBER && $this->searchValueIsNumeric($fld, $fldVal));
+			if ($fldVal != "" && $isValidValue && IsValidOperator($fldOpr, $fldDataType)) {
+				$wrk = "x_" . $fldParm . "=" . urlencode($fldVal) .
+					"&z_" . $fldParm . "=" . urlencode($fldOpr);
+			} elseif ($fldOpr == "IS NULL" || $fldOpr == "IS NOT NULL" || ($fldOpr != "" && $oprOnly && IsValidOperator($fldOpr, $fldDataType))) {
+				$wrk = "z_" . $fldParm . "=" . urlencode($fldOpr);
+			}
+			$isValidValue = ($fldDataType != DATATYPE_NUMBER) ||
+				($fldDataType == DATATYPE_NUMBER && $this->searchValueIsNumeric($fld, $fldVal2));
+			if ($fldVal2 != "" && $isValidValue && IsValidOperator($fldOpr2, $fldDataType)) {
+				if ($wrk != "")
+					$wrk .= "&v_" . $fldParm . "=" . urlencode($fldCond) . "&";
+				$wrk .= "y_" . $fldParm . "=" . urlencode($fldVal2) .
+					"&w_" . $fldParm . "=" . urlencode($fldOpr2);
+			} elseif ($fldOpr2 == "IS NULL" || $fldOpr2 == "IS NOT NULL" || ($fldOpr2 != "" && $oprOnly && IsValidOperator($fldOpr2, $fldDataType))) {
+				if ($wrk != "")
+					$wrk .= "&v_" . $fldParm . "=" . urlencode($fldCond) . "&";
+				$wrk .= "w_" . $fldParm . "=" . urlencode($fldOpr2);
+			}
 		}
-		return $res;
-	}
-
-	// Load row values from recordset
-	public function loadRowValues($rs = NULL)
-	{
-		if ($rs && !$rs->EOF)
-			$row = $rs->fields;
-		else
-			$row = $this->newRow();
-
-		// Call Row Selected event
-		$this->Row_Selected($row);
-		if (!$rs || $rs->EOF)
-			return;
-		$this->userlevelid->setDbValue($row['userlevelid']);
-		$this->userlevelid->CurrentValue = (int)$this->userlevelid->CurrentValue;
-		$this->userlevelname->setDbValue($row['userlevelname']);
-	}
-
-	// Return a row with default values
-	protected function newRow()
-	{
-		$this->loadDefaultValues();
-		$row = [];
-		$row['userlevelid'] = $this->userlevelid->CurrentValue;
-		$row['userlevelname'] = $this->userlevelname->CurrentValue;
-		return $row;
-	}
-
-	// Load old record
-	protected function loadOldRecord()
-	{
-
-		// Load key values from Session
-		$validKey = TRUE;
-		if (strval($this->getKey("userlevelid")) != "")
-			$this->userlevelid->OldValue = $this->getKey("userlevelid"); // userlevelid
-		else
-			$validKey = FALSE;
-
-		// Load old record
-		$this->OldRecordset = NULL;
-		if ($validKey) {
-			$this->CurrentFilter = $this->getRecordFilter();
-			$sql = $this->getCurrentSql();
-			$conn = $this->getConnection();
-			$this->OldRecordset = LoadRecordset($sql, $conn);
+		if ($wrk != "") {
+			if ($url != "")
+				$url .= "&";
+			$url .= $wrk;
 		}
-		$this->loadRowValues($this->OldRecordset); // Load row values
-		return $validKey;
+	}
+	protected function searchValueIsNumeric($fld, $value)
+	{
+		if (IsFloatFormat($fld->Type))
+			$value = ConvertToFloatString($value);
+		return is_numeric($value);
+	}
+
+	// Load search values for validation
+	protected function loadSearchValues()
+	{
+
+		// Load search values
+		$got = FALSE;
+		if ($this->hohead_id->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->asset_id->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->proc_date->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->proc_ccost->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->dep_amount->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->dep_ytd->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->nb_val->AdvancedSearch->post())
+			$got = TRUE;
+		if ($this->remarks->AdvancedSearch->post())
+			$got = TRUE;
+		return $got;
 	}
 
 	// Render row values based on field settings
@@ -957,61 +863,170 @@ class t202_userlevels_add extends t202_userlevels
 		global $Security, $Language, $CurrentLanguage;
 
 		// Initialize URLs
-		// Call Row_Rendering event
+		// Convert decimal values if posted back
 
+		if ($this->proc_ccost->FormValue == $this->proc_ccost->CurrentValue && is_numeric(ConvertToFloatString($this->proc_ccost->CurrentValue)))
+			$this->proc_ccost->CurrentValue = ConvertToFloatString($this->proc_ccost->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->dep_amount->FormValue == $this->dep_amount->CurrentValue && is_numeric(ConvertToFloatString($this->dep_amount->CurrentValue)))
+			$this->dep_amount->CurrentValue = ConvertToFloatString($this->dep_amount->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->dep_ytd->FormValue == $this->dep_ytd->CurrentValue && is_numeric(ConvertToFloatString($this->dep_ytd->CurrentValue)))
+			$this->dep_ytd->CurrentValue = ConvertToFloatString($this->dep_ytd->CurrentValue);
+
+		// Convert decimal values if posted back
+		if ($this->nb_val->FormValue == $this->nb_val->CurrentValue && is_numeric(ConvertToFloatString($this->nb_val->CurrentValue)))
+			$this->nb_val->CurrentValue = ConvertToFloatString($this->nb_val->CurrentValue);
+
+		// Call Row_Rendering event
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
-		// userlevelid
-		// userlevelname
+		// id
+		// hohead_id
+		// asset_id
+		// proc_date
+		// proc_ccost
+		// dep_amount
+		// dep_ytd
+		// nb_val
+		// remarks
 
 		if ($this->RowType == ROWTYPE_VIEW) { // View row
 
-			// userlevelid
-			$this->userlevelid->ViewValue = $this->userlevelid->CurrentValue;
-			$this->userlevelid->ViewValue = FormatNumber($this->userlevelid->ViewValue, 0, -2, -2, -2);
-			$this->userlevelid->ViewCustomAttributes = "";
+			// id
+			$this->id->ViewValue = $this->id->CurrentValue;
+			$this->id->ViewCustomAttributes = "";
 
-			// userlevelname
-			$this->userlevelname->ViewValue = $this->userlevelname->CurrentValue;
-			if ($Security->getUserLevelName($this->userlevelid->CurrentValue) != "")
-				$this->userlevelname->ViewValue = $Security->getUserLevelName($this->userlevelid->CurrentValue);
-			$this->userlevelname->ViewCustomAttributes = "";
+			// hohead_id
+			$this->hohead_id->ViewValue = $this->hohead_id->CurrentValue;
+			$this->hohead_id->ViewValue = FormatNumber($this->hohead_id->ViewValue, 0, -2, -2, -2);
+			$this->hohead_id->ViewCustomAttributes = "";
 
-			// userlevelid
-			$this->userlevelid->LinkCustomAttributes = "";
-			$this->userlevelid->HrefValue = "";
-			$this->userlevelid->TooltipValue = "";
+			// asset_id
+			$this->asset_id->ViewValue = $this->asset_id->CurrentValue;
+			$this->asset_id->ViewValue = FormatNumber($this->asset_id->ViewValue, 0, -2, -2, -2);
+			$this->asset_id->ViewCustomAttributes = "";
 
-			// userlevelname
-			$this->userlevelname->LinkCustomAttributes = "";
-			$this->userlevelname->HrefValue = "";
-			$this->userlevelname->TooltipValue = "";
-		} elseif ($this->RowType == ROWTYPE_ADD) { // Add row
+			// proc_date
+			$this->proc_date->ViewValue = $this->proc_date->CurrentValue;
+			$this->proc_date->ViewValue = FormatDateTime($this->proc_date->ViewValue, 0);
+			$this->proc_date->ViewCustomAttributes = "";
 
-			// userlevelid
-			$this->userlevelid->EditAttrs["class"] = "form-control";
-			$this->userlevelid->EditCustomAttributes = "";
-			$this->userlevelid->EditValue = HtmlEncode($this->userlevelid->CurrentValue);
-			$this->userlevelid->PlaceHolder = RemoveHtml($this->userlevelid->caption());
+			// proc_ccost
+			$this->proc_ccost->ViewValue = $this->proc_ccost->CurrentValue;
+			$this->proc_ccost->ViewValue = FormatNumber($this->proc_ccost->ViewValue, 2, -2, -2, -2);
+			$this->proc_ccost->ViewCustomAttributes = "";
 
-			// userlevelname
-			$this->userlevelname->EditAttrs["class"] = "form-control";
-			$this->userlevelname->EditCustomAttributes = "";
-			if (!$this->userlevelname->Raw)
-				$this->userlevelname->CurrentValue = HtmlDecode($this->userlevelname->CurrentValue);
-			$this->userlevelname->EditValue = HtmlEncode($this->userlevelname->CurrentValue);
-			$this->userlevelname->PlaceHolder = RemoveHtml($this->userlevelname->caption());
+			// dep_amount
+			$this->dep_amount->ViewValue = $this->dep_amount->CurrentValue;
+			$this->dep_amount->ViewValue = FormatNumber($this->dep_amount->ViewValue, 2, -2, -2, -2);
+			$this->dep_amount->ViewCustomAttributes = "";
 
-			// Add refer script
-			// userlevelid
+			// dep_ytd
+			$this->dep_ytd->ViewValue = $this->dep_ytd->CurrentValue;
+			$this->dep_ytd->ViewValue = FormatNumber($this->dep_ytd->ViewValue, 2, -2, -2, -2);
+			$this->dep_ytd->ViewCustomAttributes = "";
 
-			$this->userlevelid->LinkCustomAttributes = "";
-			$this->userlevelid->HrefValue = "";
+			// nb_val
+			$this->nb_val->ViewValue = $this->nb_val->CurrentValue;
+			$this->nb_val->ViewValue = FormatNumber($this->nb_val->ViewValue, 2, -2, -2, -2);
+			$this->nb_val->ViewCustomAttributes = "";
 
-			// userlevelname
-			$this->userlevelname->LinkCustomAttributes = "";
-			$this->userlevelname->HrefValue = "";
+			// remarks
+			$this->remarks->ViewValue = $this->remarks->CurrentValue;
+			$this->remarks->ViewCustomAttributes = "";
+
+			// hohead_id
+			$this->hohead_id->LinkCustomAttributes = "";
+			$this->hohead_id->HrefValue = "";
+			$this->hohead_id->TooltipValue = "";
+
+			// asset_id
+			$this->asset_id->LinkCustomAttributes = "";
+			$this->asset_id->HrefValue = "";
+			$this->asset_id->TooltipValue = "";
+
+			// proc_date
+			$this->proc_date->LinkCustomAttributes = "";
+			$this->proc_date->HrefValue = "";
+			$this->proc_date->TooltipValue = "";
+
+			// proc_ccost
+			$this->proc_ccost->LinkCustomAttributes = "";
+			$this->proc_ccost->HrefValue = "";
+			$this->proc_ccost->TooltipValue = "";
+
+			// dep_amount
+			$this->dep_amount->LinkCustomAttributes = "";
+			$this->dep_amount->HrefValue = "";
+			$this->dep_amount->TooltipValue = "";
+
+			// dep_ytd
+			$this->dep_ytd->LinkCustomAttributes = "";
+			$this->dep_ytd->HrefValue = "";
+			$this->dep_ytd->TooltipValue = "";
+
+			// nb_val
+			$this->nb_val->LinkCustomAttributes = "";
+			$this->nb_val->HrefValue = "";
+			$this->nb_val->TooltipValue = "";
+
+			// remarks
+			$this->remarks->LinkCustomAttributes = "";
+			$this->remarks->HrefValue = "";
+			$this->remarks->TooltipValue = "";
+		} elseif ($this->RowType == ROWTYPE_SEARCH) { // Search row
+
+			// hohead_id
+			$this->hohead_id->EditAttrs["class"] = "form-control";
+			$this->hohead_id->EditCustomAttributes = "";
+			$this->hohead_id->EditValue = HtmlEncode($this->hohead_id->AdvancedSearch->SearchValue);
+			$this->hohead_id->PlaceHolder = RemoveHtml($this->hohead_id->caption());
+
+			// asset_id
+			$this->asset_id->EditAttrs["class"] = "form-control";
+			$this->asset_id->EditCustomAttributes = "";
+			$this->asset_id->EditValue = HtmlEncode($this->asset_id->AdvancedSearch->SearchValue);
+			$this->asset_id->PlaceHolder = RemoveHtml($this->asset_id->caption());
+
+			// proc_date
+			$this->proc_date->EditAttrs["class"] = "form-control";
+			$this->proc_date->EditCustomAttributes = "";
+			$this->proc_date->EditValue = HtmlEncode(FormatDateTime(UnFormatDateTime($this->proc_date->AdvancedSearch->SearchValue, 0), 8));
+			$this->proc_date->PlaceHolder = RemoveHtml($this->proc_date->caption());
+
+			// proc_ccost
+			$this->proc_ccost->EditAttrs["class"] = "form-control";
+			$this->proc_ccost->EditCustomAttributes = "";
+			$this->proc_ccost->EditValue = HtmlEncode($this->proc_ccost->AdvancedSearch->SearchValue);
+			$this->proc_ccost->PlaceHolder = RemoveHtml($this->proc_ccost->caption());
+
+			// dep_amount
+			$this->dep_amount->EditAttrs["class"] = "form-control";
+			$this->dep_amount->EditCustomAttributes = "";
+			$this->dep_amount->EditValue = HtmlEncode($this->dep_amount->AdvancedSearch->SearchValue);
+			$this->dep_amount->PlaceHolder = RemoveHtml($this->dep_amount->caption());
+
+			// dep_ytd
+			$this->dep_ytd->EditAttrs["class"] = "form-control";
+			$this->dep_ytd->EditCustomAttributes = "";
+			$this->dep_ytd->EditValue = HtmlEncode($this->dep_ytd->AdvancedSearch->SearchValue);
+			$this->dep_ytd->PlaceHolder = RemoveHtml($this->dep_ytd->caption());
+
+			// nb_val
+			$this->nb_val->EditAttrs["class"] = "form-control";
+			$this->nb_val->EditCustomAttributes = "";
+			$this->nb_val->EditValue = HtmlEncode($this->nb_val->AdvancedSearch->SearchValue);
+			$this->nb_val->PlaceHolder = RemoveHtml($this->nb_val->caption());
+
+			// remarks
+			$this->remarks->EditAttrs["class"] = "form-control";
+			$this->remarks->EditCustomAttributes = "";
+			$this->remarks->EditValue = HtmlEncode($this->remarks->AdvancedSearch->SearchValue);
+			$this->remarks->PlaceHolder = RemoveHtml($this->remarks->caption());
 		}
 		if ($this->RowType == ROWTYPE_ADD || $this->RowType == ROWTYPE_EDIT || $this->RowType == ROWTYPE_SEARCH) // Add/Edit/Search row
 			$this->setupFieldTitles();
@@ -1021,158 +1036,62 @@ class t202_userlevels_add extends t202_userlevels
 			$this->Row_Rendered();
 	}
 
-	// Validate form
-	protected function validateForm()
+	// Validate search
+	protected function validateSearch()
 	{
-		global $Language, $FormError;
+		global $SearchError;
 
-		// Initialize form error message
-		$FormError = "";
+		// Initialize
+		$SearchError = "";
 
 		// Check if validation required
 		if (!Config("SERVER_VALIDATE"))
-			return ($FormError == "");
-		if ($this->userlevelid->Required) {
-			if (!$this->userlevelid->IsDetailKey && $this->userlevelid->FormValue != NULL && $this->userlevelid->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->userlevelid->caption(), $this->userlevelid->RequiredErrorMessage));
-			}
+			return TRUE;
+		if (!CheckInteger($this->hohead_id->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->hohead_id->errorMessage());
 		}
-		if (!CheckInteger($this->userlevelid->FormValue)) {
-			AddMessage($FormError, $this->userlevelid->errorMessage());
+		if (!CheckInteger($this->asset_id->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->asset_id->errorMessage());
 		}
-		if ($this->userlevelname->Required) {
-			if (!$this->userlevelname->IsDetailKey && $this->userlevelname->FormValue != NULL && $this->userlevelname->FormValue == "") {
-				AddMessage($FormError, str_replace("%s", $this->userlevelname->caption(), $this->userlevelname->RequiredErrorMessage));
-			}
+		if (!CheckDate($this->proc_date->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->proc_date->errorMessage());
+		}
+		if (!CheckNumber($this->proc_ccost->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->proc_ccost->errorMessage());
+		}
+		if (!CheckNumber($this->dep_amount->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->dep_amount->errorMessage());
+		}
+		if (!CheckNumber($this->dep_ytd->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->dep_ytd->errorMessage());
+		}
+		if (!CheckNumber($this->nb_val->AdvancedSearch->SearchValue)) {
+			AddMessage($SearchError, $this->nb_val->errorMessage());
 		}
 
 		// Return validate result
-		$validateForm = ($FormError == "");
+		$validateSearch = ($SearchError == "");
 
 		// Call Form_CustomValidate event
 		$formCustomError = "";
-		$validateForm = $validateForm && $this->Form_CustomValidate($formCustomError);
+		$validateSearch = $validateSearch && $this->Form_CustomValidate($formCustomError);
 		if ($formCustomError != "") {
-			AddMessage($FormError, $formCustomError);
+			AddMessage($SearchError, $formCustomError);
 		}
-		return $validateForm;
+		return $validateSearch;
 	}
 
-	// Add record
-	protected function addRow($rsold = NULL)
+	// Load advanced search
+	public function loadAdvancedSearch()
 	{
-		global $Language, $Security;
-		if ($this->userlevelid->Required && trim(strval($this->userlevelid->CurrentValue)) == "") {
-			$this->setFailureMessage($Language->phrase("MissingUserLevelID"));
-		} elseif (trim($this->userlevelname->CurrentValue) == "") {
-			$this->setFailureMessage($Language->phrase("MissingUserLevelName"));
-		} elseif (!is_numeric($this->userlevelid->CurrentValue)) {
-			$this->setFailureMessage($Language->phrase("UserLevelIDInteger"));
-		} elseif ((int)$this->userlevelid->CurrentValue < -2) {
-			$this->setFailureMessage($Language->phrase("UserLevelIDIncorrect"));
-		} elseif ((int)$this->userlevelid->CurrentValue == 0 && !SameText($this->userlevelname->CurrentValue, "Default")) {
-			$this->setFailureMessage($Language->phrase("UserLevelDefaultName"));
-		} elseif ((int)$this->userlevelid->CurrentValue == -1 && !SameText($this->userlevelname->CurrentValue, "Administrator")) {
-			$this->setFailureMessage($Language->phrase("UserLevelAdministratorName"));
-		} elseif ((int)$this->userlevelid->CurrentValue == -2 && !SameText($this->userlevelname->CurrentValue, "Anonymous")) {
-			$this->setFailureMessage($Language->phrase("UserLevelAnonymousName"));
-		} elseif ((int)$this->userlevelid->CurrentValue > 0 && in_array(strtolower(trim($this->userlevelname->CurrentValue)), ["anonymous", "administrator", "default"])) {
-			$this->setFailureMessage($Language->phrase("UserLevelNameIncorrect"));
-		}
-		if ($this->getFailureMessage() != "")
-			return FALSE;
-		$conn = $this->getConnection();
-
-		// Load db values from rsold
-		$this->loadDbValues($rsold);
-		if ($rsold) {
-		}
-		$rsnew = [];
-
-		// userlevelid
-		$this->userlevelid->setDbValueDef($rsnew, $this->userlevelid->CurrentValue, 0, FALSE);
-
-		// userlevelname
-		$this->userlevelname->setDbValueDef($rsnew, $this->userlevelname->CurrentValue, "", FALSE);
-
-		// Call Row Inserting event
-		$rs = ($rsold) ? $rsold->fields : NULL;
-		$insertRow = $this->Row_Inserting($rs, $rsnew);
-
-		// Check if key value entered
-		if ($insertRow && $this->ValidateKey && strval($rsnew['userlevelid']) == "") {
-			$this->setFailureMessage($Language->phrase("InvalidKeyValue"));
-			$insertRow = FALSE;
-		}
-
-		// Check for duplicate key
-		if ($insertRow && $this->ValidateKey) {
-			$filter = $this->getRecordFilter($rsnew);
-			$rsChk = $this->loadRs($filter);
-			if ($rsChk && !$rsChk->EOF) {
-				$keyErrMsg = str_replace("%f", $filter, $Language->phrase("DupKey"));
-				$this->setFailureMessage($keyErrMsg);
-				$rsChk->close();
-				$insertRow = FALSE;
-			}
-		}
-		if ($insertRow) {
-			$conn->raiseErrorFn = Config("ERROR_FUNC");
-			$addRow = $this->insert($rsnew);
-			$conn->raiseErrorFn = "";
-			if ($addRow) {
-			}
-		} else {
-			if ($this->getSuccessMessage() != "" || $this->getFailureMessage() != "") {
-
-				// Use the message, do nothing
-			} elseif ($this->CancelMessage != "") {
-				$this->setFailureMessage($this->CancelMessage);
-				$this->CancelMessage = "";
-			} else {
-				$this->setFailureMessage($Language->phrase("InsertCancelled"));
-			}
-			$addRow = FALSE;
-		}
-		if ($addRow) {
-
-			// Call Row Inserted event
-			$rs = ($rsold) ? $rsold->fields : NULL;
-			$this->Row_Inserted($rs, $rsnew);
-		}
-
-		// Clean upload path if any
-		if ($addRow) {
-		}
-		if ($addRow) {
-
-			// Add User Level priv
-			if ($this->Priv > 0) {
-				$userLevelList = $GLOBALS["USER_LEVELS"];
-				$userLevelPrivList = $GLOBALS["USER_LEVEL_PRIVS"];
-				$tableList = $GLOBALS["USER_LEVEL_TABLES"];
-				$tableNameCount = count($tableList);
-				for ($i = 0; $i < $tableNameCount; $i++) {
-					$sql = "INSERT INTO " . Config("USER_LEVEL_PRIV_TABLE") . " (" .
-						Config("USER_LEVEL_PRIV_TABLE_NAME_FIELD") . ", " .
-						Config("USER_LEVEL_PRIV_USER_LEVEL_ID_FIELD") . ", " .
-						Config("USER_LEVEL_PRIV_PRIV_FIELD") . ") VALUES ('" .
-						AdjustSql($tableList[$i][4] . $tableList[$i][0], Config("USER_LEVEL_PRIV_DBID")) .
-						"', " . $this->userlevelid->CurrentValue . ", " . $this->Priv . ")";
-					$conn->execute($sql);
-				}
-			}
-
-			// Load user level information again
-			$Security->setupUserLevel();
-		}
-
-		// Write JSON for API request
-		if (IsApi() && $addRow) {
-			$row = $this->getRecordsFromRecordset([$rsnew], TRUE);
-			WriteJson(["success" => TRUE, $this->TableVar => $row]);
-		}
-		return $addRow;
+		$this->hohead_id->AdvancedSearch->load();
+		$this->asset_id->AdvancedSearch->load();
+		$this->proc_date->AdvancedSearch->load();
+		$this->proc_ccost->AdvancedSearch->load();
+		$this->dep_amount->AdvancedSearch->load();
+		$this->dep_ytd->AdvancedSearch->load();
+		$this->nb_val->AdvancedSearch->load();
+		$this->remarks->AdvancedSearch->load();
 	}
 
 	// Set up Breadcrumb
@@ -1181,9 +1100,9 @@ class t202_userlevels_add extends t202_userlevels
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new Breadcrumb();
 		$url = substr(CurrentUrl(), strrpos(CurrentUrl(), "/")+1);
-		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t202_userlevelslist.php"), "", $this->TableVar, TRUE);
-		$pageId = ($this->isCopy()) ? "Copy" : "Add";
-		$Breadcrumb->add("add", $pageId, $url);
+		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t102_ho_detaillist.php"), "", $this->TableVar, TRUE);
+		$pageId = "search";
+		$Breadcrumb->add("search", $pageId, $url);
 	}
 
 	// Setup lookup options

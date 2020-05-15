@@ -4,7 +4,7 @@ namespace PHPMaker2020\p_assettracker1_0;
 /**
  * Page class
  */
-class t203_userlevelpermissions_view extends t203_userlevelpermissions
+class t101_ho_head_view extends t101_ho_head
 {
 
 	// Page ID
@@ -14,10 +14,10 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 	public $ProjectID = "{A1916BF1-858E-4493-B275-C510122AD7E3}";
 
 	// Table name
-	public $TableName = 't203_userlevelpermissions';
+	public $TableName = 't101_ho_head';
 
 	// Page object name
-	public $PageObjName = "t203_userlevelpermissions_view";
+	public $PageObjName = "t101_ho_head_view";
 
 	// Page URLs
 	public $AddUrl;
@@ -381,19 +381,15 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		// Parent constuctor
 		parent::__construct();
 
-		// Table object (t203_userlevelpermissions)
-		if (!isset($GLOBALS["t203_userlevelpermissions"]) || get_class($GLOBALS["t203_userlevelpermissions"]) == PROJECT_NAMESPACE . "t203_userlevelpermissions") {
-			$GLOBALS["t203_userlevelpermissions"] = &$this;
-			$GLOBALS["Table"] = &$GLOBALS["t203_userlevelpermissions"];
+		// Table object (t101_ho_head)
+		if (!isset($GLOBALS["t101_ho_head"]) || get_class($GLOBALS["t101_ho_head"]) == PROJECT_NAMESPACE . "t101_ho_head") {
+			$GLOBALS["t101_ho_head"] = &$this;
+			$GLOBALS["Table"] = &$GLOBALS["t101_ho_head"];
 		}
 		$keyUrl = "";
-		if (Get("userlevelid") !== NULL) {
-			$this->RecKey["userlevelid"] = Get("userlevelid");
-			$keyUrl .= "&amp;userlevelid=" . urlencode($this->RecKey["userlevelid"]);
-		}
-		if (Get("_tablename") !== NULL) {
-			$this->RecKey["_tablename"] = Get("_tablename");
-			$keyUrl .= "&amp;_tablename=" . urlencode($this->RecKey["_tablename"]);
+		if (Get("id") !== NULL) {
+			$this->RecKey["id"] = Get("id");
+			$keyUrl .= "&amp;id=" . urlencode($this->RecKey["id"]);
 		}
 		$this->ExportPrintUrl = $this->pageUrl() . "export=print" . $keyUrl;
 		$this->ExportHtmlUrl = $this->pageUrl() . "export=html" . $keyUrl;
@@ -413,7 +409,7 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 
 		// Table name (for backward compatibility only)
 		if (!defined(PROJECT_NAMESPACE . "TABLE_NAME"))
-			define(PROJECT_NAMESPACE . "TABLE_NAME", 't203_userlevelpermissions');
+			define(PROJECT_NAMESPACE . "TABLE_NAME", 't101_ho_head');
 
 		// Start timer
 		if (!isset($GLOBALS["DebugTimer"]))
@@ -454,14 +450,14 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		Page_Unloaded();
 
 		// Export
-		global $t203_userlevelpermissions;
+		global $t101_ho_head;
 		if ($this->CustomExport && $this->CustomExport == $this->Export && array_key_exists($this->CustomExport, Config("EXPORT_CLASSES"))) {
 				$content = ob_get_contents();
 			if ($ExportFileName == "")
 				$ExportFileName = $this->TableVar;
 			$class = PROJECT_NAMESPACE . Config("EXPORT_CLASSES." . $this->CustomExport);
 			if (class_exists($class)) {
-				$doc = new $class($t203_userlevelpermissions);
+				$doc = new $class($t101_ho_head);
 				$doc->Text = @$content;
 				if ($this->isExport("email"))
 					echo $this->exportEmail($doc->Text);
@@ -496,7 +492,7 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 				$pageName = GetPageName($url);
 				if ($pageName != $this->getListUrl()) { // Not List page
 					$row["caption"] = $this->getModalCaption($pageName);
-					if ($pageName == "t203_userlevelpermissionsview.php")
+					if ($pageName == "t101_ho_headview.php")
 						$row["view"] = "1";
 				} else { // List page should not be shown as modal => error
 					$row["error"] = $this->getFailureMessage();
@@ -587,8 +583,7 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 	{
 		$key = "";
 		if (is_array($ar)) {
-			$key .= @$ar['userlevelid'] . Config("COMPOSITE_KEY_SEPARATOR");
-			$key .= @$ar['tablename'];
+			$key .= @$ar['id'];
 		}
 		return $key;
 	}
@@ -600,6 +595,8 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 	 */
 	protected function hideFieldsForAddEdit()
 	{
+		if ($this->isAdd() || $this->isCopy() || $this->isGridAdd())
+			$this->id->Visible = FALSE;
 	}
 
 	// Lookup data
@@ -736,7 +733,7 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 				$Security->saveLastUrl();
 				$this->setFailureMessage(DeniedMessage()); // Set no permission
 				if ($Security->canList())
-					$this->terminate(GetUrl("t203_userlevelpermissionslist.php"));
+					$this->terminate(GetUrl("t101_ho_headlist.php"));
 				else
 					$this->terminate(GetUrl("login.php"));
 				return;
@@ -748,9 +745,19 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 			}
 		}
 		$this->CurrentAction = Param("action"); // Set up current action
-		$this->userlevelid->setVisibility();
-		$this->_tablename->setVisibility();
-		$this->permission->setVisibility();
+		$this->id->setVisibility();
+		$this->tr_no->setVisibility();
+		$this->tr_date->setVisibility();
+		$this->ho_to->setVisibility();
+		$this->cno_to->setVisibility();
+		$this->dept_to->setVisibility();
+		$this->ho_by->setVisibility();
+		$this->cno_by->setVisibility();
+		$this->dept_by->setVisibility();
+		$this->sign1->setVisibility();
+		$this->sign2->setVisibility();
+		$this->sign3->setVisibility();
+		$this->sign4->setVisibility();
 		$this->hideFieldsForAddEdit();
 
 		// Do not use lookup cache
@@ -772,11 +779,19 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		$this->createToken();
 
 		// Set up lookup cache
-		// Check permission
+		$this->setupLookupOptions($this->ho_to);
+		$this->setupLookupOptions($this->dept_to);
+		$this->setupLookupOptions($this->ho_by);
+		$this->setupLookupOptions($this->dept_by);
+		$this->setupLookupOptions($this->sign1);
+		$this->setupLookupOptions($this->sign2);
+		$this->setupLookupOptions($this->sign3);
+		$this->setupLookupOptions($this->sign4);
 
+		// Check permission
 		if (!$Security->canView()) {
 			$this->setFailureMessage(DeniedMessage()); // No permission
-			$this->terminate("t203_userlevelpermissionslist.php");
+			$this->terminate("t101_ho_headlist.php");
 			return;
 		}
 
@@ -789,35 +804,20 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		$returnUrl = "";
 		$matchRecord = FALSE;
 		if ($this->isPageRequest()) { // Validate request
-			if (Get("userlevelid") !== NULL) {
-				$this->userlevelid->setQueryStringValue(Get("userlevelid"));
-				$this->RecKey["userlevelid"] = $this->userlevelid->QueryStringValue;
+			if (Get("id") !== NULL) {
+				$this->id->setQueryStringValue(Get("id"));
+				$this->RecKey["id"] = $this->id->QueryStringValue;
 			} elseif (IsApi() && Key(0) !== NULL) {
-				$this->userlevelid->setQueryStringValue(Key(0));
-				$this->RecKey["userlevelid"] = $this->userlevelid->QueryStringValue;
-			} elseif (Post("userlevelid") !== NULL) {
-				$this->userlevelid->setFormValue(Post("userlevelid"));
-				$this->RecKey["userlevelid"] = $this->userlevelid->FormValue;
+				$this->id->setQueryStringValue(Key(0));
+				$this->RecKey["id"] = $this->id->QueryStringValue;
+			} elseif (Post("id") !== NULL) {
+				$this->id->setFormValue(Post("id"));
+				$this->RecKey["id"] = $this->id->FormValue;
 			} elseif (IsApi() && Route(2) !== NULL) {
-				$this->userlevelid->setFormValue(Route(2));
-				$this->RecKey["userlevelid"] = $this->userlevelid->FormValue;
+				$this->id->setFormValue(Route(2));
+				$this->RecKey["id"] = $this->id->FormValue;
 			} else {
-				$returnUrl = "t203_userlevelpermissionslist.php"; // Return to list
-			}
-			if (Get("_tablename") !== NULL) {
-				$this->_tablename->setQueryStringValue(Get("_tablename"));
-				$this->RecKey["_tablename"] = $this->_tablename->QueryStringValue;
-			} elseif (IsApi() && Key(1) !== NULL) {
-				$this->_tablename->setQueryStringValue(Key(1));
-				$this->RecKey["_tablename"] = $this->_tablename->QueryStringValue;
-			} elseif (Post("_tablename") !== NULL) {
-				$this->_tablename->setFormValue(Post("_tablename"));
-				$this->RecKey["_tablename"] = $this->_tablename->FormValue;
-			} elseif (IsApi() && Route(3) !== NULL) {
-				$this->_tablename->setFormValue(Route(3));
-				$this->RecKey["_tablename"] = $this->_tablename->FormValue;
-			} else {
-				$returnUrl = "t203_userlevelpermissionslist.php"; // Return to list
+				$returnUrl = "t101_ho_headlist.php"; // Return to list
 			}
 
 			// Get action
@@ -839,11 +839,11 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 					if (!$res) { // Load record based on key
 						if ($this->getSuccessMessage() == "" && $this->getFailureMessage() == "")
 							$this->setFailureMessage($Language->phrase("NoRecord")); // Set no record message
-						$returnUrl = "t203_userlevelpermissionslist.php"; // No matching record, return to list
+						$returnUrl = "t101_ho_headlist.php"; // No matching record, return to list
 					}
 			}
 		} else {
-			$returnUrl = "t203_userlevelpermissionslist.php"; // Not page request, return to list
+			$returnUrl = "t101_ho_headlist.php"; // Not page request, return to list
 		}
 		if ($returnUrl != "") {
 			$this->terminate($returnUrl);
@@ -858,6 +858,9 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		$this->RowType = ROWTYPE_VIEW;
 		$this->resetAttributes();
 		$this->renderRow();
+
+		// Set up detail parameters
+		$this->setupDetailParms();
 
 		// Normal return
 		if (IsApi()) {
@@ -904,11 +907,88 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 
 		// Delete
 		$item = &$option->add("delete");
-		if ($this->IsModal) // Handle as inline delete
-			$item->Body = "<a onclick=\"return ew.confirmDelete(this);\" class=\"ew-action ew-delete\" title=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" href=\"" . HtmlEncode(UrlAddQuery($this->DeleteUrl, "action=1")) . "\">" . $Language->phrase("ViewPageDeleteLink") . "</a>";
-		else
-			$item->Body = "<a class=\"ew-action ew-delete\" title=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" href=\"" . HtmlEncode($this->DeleteUrl) . "\">" . $Language->phrase("ViewPageDeleteLink") . "</a>";
+		$item->Body = "<a onclick=\"return ew.confirmDelete(this);\" class=\"ew-action ew-delete\" title=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" data-caption=\"" . HtmlTitle($Language->phrase("ViewPageDeleteLink")) . "\" href=\"" . HtmlEncode($this->DeleteUrl) . "\">" . $Language->phrase("ViewPageDeleteLink") . "</a>";
 		$item->Visible = ($this->DeleteUrl != "" && $Security->canDelete());
+		$option = $options["detail"];
+		$detailTableLink = "";
+		$detailViewTblVar = "";
+		$detailCopyTblVar = "";
+		$detailEditTblVar = "";
+
+		// "detail_t102_ho_detail"
+		$item = &$option->add("detail_t102_ho_detail");
+		$body = $Language->phrase("ViewPageDetailLink") . $Language->TablePhrase("t102_ho_detail", "TblCaption");
+		$body = "<a class=\"btn btn-default ew-row-link ew-detail\" data-action=\"list\" href=\"" . HtmlEncode("t102_ho_detaillist.php?" . Config("TABLE_SHOW_MASTER") . "=t101_ho_head&fk_id=" . urlencode(strval($this->id->CurrentValue)) . "") . "\">" . $body . "</a>";
+		$links = "";
+		if (!isset($GLOBALS["t102_ho_detail_grid"]))
+			$GLOBALS["t102_ho_detail_grid"] = new t102_ho_detail_grid();
+		if ($GLOBALS["t102_ho_detail_grid"]->DetailView && $Security->canView() && $Security->allowView(CurrentProjectID() . 't101_ho_head')) {
+			$links .= "<li><a class=\"ew-row-link ew-detail-view\" data-action=\"view\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailViewLink")) . "\" href=\"" . HtmlEncode($this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=t102_ho_detail")) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailViewLink")) . "</a></li>";
+			if ($detailViewTblVar != "")
+				$detailViewTblVar .= ",";
+			$detailViewTblVar .= "t102_ho_detail";
+		}
+		if ($GLOBALS["t102_ho_detail_grid"]->DetailEdit && $Security->canEdit() && $Security->allowEdit(CurrentProjectID() . 't101_ho_head')) {
+			$links .= "<li><a class=\"ew-row-link ew-detail-edit\" data-action=\"edit\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailEditLink")) . "\" href=\"" . HtmlEncode($this->getEditUrl(Config("TABLE_SHOW_DETAIL") . "=t102_ho_detail")) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailEditLink")) . "</a></li>";
+			if ($detailEditTblVar != "")
+				$detailEditTblVar .= ",";
+			$detailEditTblVar .= "t102_ho_detail";
+		}
+		if ($GLOBALS["t102_ho_detail_grid"]->DetailAdd && $Security->canAdd() && $Security->allowAdd(CurrentProjectID() . 't101_ho_head')) {
+			$links .= "<li><a class=\"ew-row-link ew-detail-copy\" data-action=\"add\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailCopyLink")) . "\" href=\"" . HtmlEncode($this->getCopyUrl(Config("TABLE_SHOW_DETAIL") . "=t102_ho_detail")) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailCopyLink")) . "</a></li>";
+			if ($detailCopyTblVar != "")
+				$detailCopyTblVar .= ",";
+			$detailCopyTblVar .= "t102_ho_detail";
+		}
+		if ($links != "") {
+			$body .= "<button class=\"dropdown-toggle btn btn-default ew-detail\" data-toggle=\"dropdown\"></button>";
+			$body .= "<ul class=\"dropdown-menu\">". $links . "</ul>";
+		}
+		$body = "<div class=\"btn-group btn-group-sm ew-btn-group\">" . $body . "</div>";
+		$item->Body = $body;
+		$item->Visible = $Security->allowList(CurrentProjectID() . 't102_ho_detail');
+		if ($item->Visible) {
+			if ($detailTableLink != "")
+				$detailTableLink .= ",";
+			$detailTableLink .= "t102_ho_detail";
+		}
+		if ($this->ShowMultipleDetails)
+			$item->Visible = FALSE;
+
+		// Multiple details
+		if ($this->ShowMultipleDetails) {
+			$body = "<div class=\"btn-group btn-group-sm ew-btn-group\">";
+			$links = "";
+			if ($detailViewTblVar != "") {
+				$links .= "<li><a class=\"ew-row-link ew-detail-view\" data-action=\"view\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailViewLink")) . "\" href=\"" . HtmlEncode($this->getViewUrl(Config("TABLE_SHOW_DETAIL") . "=" . $detailViewTblVar)) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailViewLink")) . "</a></li>";
+			}
+			if ($detailEditTblVar != "") {
+				$links .= "<li><a class=\"ew-row-link ew-detail-edit\" data-action=\"edit\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailEditLink")) . "\" href=\"" . HtmlEncode($this->getEditUrl(Config("TABLE_SHOW_DETAIL") . "=" . $detailEditTblVar)) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailEditLink")) . "</a></li>";
+			}
+			if ($detailCopyTblVar != "") {
+				$links .= "<li><a class=\"ew-row-link ew-detail-copy\" data-action=\"add\" data-caption=\"" . HtmlTitle($Language->phrase("MasterDetailCopyLink")) . "\" href=\"" . HtmlEncode($this->getCopyUrl(Config("TABLE_SHOW_DETAIL") . "=" . $detailCopyTblVar)) . "\">" . HtmlImageAndText($Language->phrase("MasterDetailCopyLink")) . "</a></li>";
+			}
+			if ($links != "") {
+				$body .= "<button class=\"dropdown-toggle btn btn-default ew-master-detail\" title=\"" . HtmlTitle($Language->phrase("MultipleMasterDetails")) . "\" data-toggle=\"dropdown\">" . $Language->phrase("MultipleMasterDetails") . "</button>";
+				$body .= "<ul class=\"dropdown-menu ew-menu\">". $links . "</ul>";
+			}
+			$body .= "</div>";
+
+			// Multiple details
+			$item = &$option->add("details");
+			$item->Body = $body;
+		}
+
+		// Set up detail default
+		$option = $options["detail"];
+		$options["detail"]->DropDownButtonPhrase = $Language->phrase("ButtonDetails");
+		$ar = explode(",", $detailTableLink);
+		$cnt = count($ar);
+		$option->UseDropDownButton = ($cnt > 1);
+		$option->UseButtonGroup = TRUE;
+		$item = &$option->add($option->GroupOptionName);
+		$item->Body = "";
+		$item->Visible = FALSE;
 
 		// Set up action default
 		$option = $options["action"];
@@ -957,18 +1037,38 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 			return;
 		if ($this->AuditTrailOnView)
 			$this->writeAuditTrailOnView($row);
-		$this->userlevelid->setDbValue($row['userlevelid']);
-		$this->_tablename->setDbValue($row['tablename']);
-		$this->permission->setDbValue($row['permission']);
+		$this->id->setDbValue($row['id']);
+		$this->tr_no->setDbValue($row['tr_no']);
+		$this->tr_date->setDbValue($row['tr_date']);
+		$this->ho_to->setDbValue($row['ho_to']);
+		$this->cno_to->setDbValue($row['cno_to']);
+		$this->dept_to->setDbValue($row['dept_to']);
+		$this->ho_by->setDbValue($row['ho_by']);
+		$this->cno_by->setDbValue($row['cno_by']);
+		$this->dept_by->setDbValue($row['dept_by']);
+		$this->sign1->setDbValue($row['sign1']);
+		$this->sign2->setDbValue($row['sign2']);
+		$this->sign3->setDbValue($row['sign3']);
+		$this->sign4->setDbValue($row['sign4']);
 	}
 
 	// Return a row with default values
 	protected function newRow()
 	{
 		$row = [];
-		$row['userlevelid'] = NULL;
-		$row['tablename'] = NULL;
-		$row['permission'] = NULL;
+		$row['id'] = NULL;
+		$row['tr_no'] = NULL;
+		$row['tr_date'] = NULL;
+		$row['ho_to'] = NULL;
+		$row['cno_to'] = NULL;
+		$row['dept_to'] = NULL;
+		$row['ho_by'] = NULL;
+		$row['cno_by'] = NULL;
+		$row['dept_by'] = NULL;
+		$row['sign1'] = NULL;
+		$row['sign2'] = NULL;
+		$row['sign3'] = NULL;
+		$row['sign4'] = NULL;
 		return $row;
 	}
 
@@ -989,45 +1089,314 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		$this->Row_Rendering();
 
 		// Common render codes for all row types
-		// userlevelid
-		// tablename
-		// permission
+		// id
+		// tr_no
+		// tr_date
+		// ho_to
+		// cno_to
+		// dept_to
+		// ho_by
+		// cno_by
+		// dept_by
+		// sign1
+		// sign2
+		// sign3
+		// sign4
 
 		if ($this->RowType == ROWTYPE_VIEW) { // View row
 
-			// userlevelid
-			$this->userlevelid->ViewValue = $this->userlevelid->CurrentValue;
-			$this->userlevelid->ViewValue = FormatNumber($this->userlevelid->ViewValue, 0, -2, -2, -2);
-			$this->userlevelid->ViewCustomAttributes = "";
+			// id
+			$this->id->ViewValue = $this->id->CurrentValue;
+			$this->id->ViewCustomAttributes = "";
 
-			// tablename
-			$this->_tablename->ViewValue = $this->_tablename->CurrentValue;
-			$this->_tablename->ViewCustomAttributes = "";
+			// tr_no
+			$this->tr_no->ViewValue = $this->tr_no->CurrentValue;
+			$this->tr_no->ViewCustomAttributes = "";
 
-			// permission
-			$this->permission->ViewValue = $this->permission->CurrentValue;
-			$this->permission->ViewValue = FormatNumber($this->permission->ViewValue, 0, -2, -2, -2);
-			$this->permission->ViewCustomAttributes = "";
+			// tr_date
+			$this->tr_date->ViewValue = $this->tr_date->CurrentValue;
+			$this->tr_date->ViewValue = FormatDateTime($this->tr_date->ViewValue, 7);
+			$this->tr_date->ViewCustomAttributes = "";
 
-			// userlevelid
-			$this->userlevelid->LinkCustomAttributes = "";
-			$this->userlevelid->HrefValue = "";
-			$this->userlevelid->TooltipValue = "";
+			// ho_to
+			$curVal = strval($this->ho_to->CurrentValue);
+			if ($curVal != "") {
+				$this->ho_to->ViewValue = $this->ho_to->lookupCacheOption($curVal);
+				if ($this->ho_to->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->ho_to->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->ho_to->ViewValue = $this->ho_to->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->ho_to->ViewValue = $this->ho_to->CurrentValue;
+					}
+				}
+			} else {
+				$this->ho_to->ViewValue = NULL;
+			}
+			$this->ho_to->ViewCustomAttributes = "";
 
-			// tablename
-			$this->_tablename->LinkCustomAttributes = "";
-			$this->_tablename->HrefValue = "";
-			$this->_tablename->TooltipValue = "";
+			// cno_to
+			$this->cno_to->ViewValue = $this->cno_to->CurrentValue;
+			$this->cno_to->ViewCustomAttributes = "";
 
-			// permission
-			$this->permission->LinkCustomAttributes = "";
-			$this->permission->HrefValue = "";
-			$this->permission->TooltipValue = "";
+			// dept_to
+			$curVal = strval($this->dept_to->CurrentValue);
+			if ($curVal != "") {
+				$this->dept_to->ViewValue = $this->dept_to->lookupCacheOption($curVal);
+				if ($this->dept_to->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->dept_to->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->dept_to->ViewValue = $this->dept_to->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->dept_to->ViewValue = $this->dept_to->CurrentValue;
+					}
+				}
+			} else {
+				$this->dept_to->ViewValue = NULL;
+			}
+			$this->dept_to->ViewCustomAttributes = "";
+
+			// ho_by
+			$curVal = strval($this->ho_by->CurrentValue);
+			if ($curVal != "") {
+				$this->ho_by->ViewValue = $this->ho_by->lookupCacheOption($curVal);
+				if ($this->ho_by->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->ho_by->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->ho_by->ViewValue = $this->ho_by->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->ho_by->ViewValue = $this->ho_by->CurrentValue;
+					}
+				}
+			} else {
+				$this->ho_by->ViewValue = NULL;
+			}
+			$this->ho_by->ViewCustomAttributes = "";
+
+			// cno_by
+			$this->cno_by->ViewValue = $this->cno_by->CurrentValue;
+			$this->cno_by->ViewValue = FormatNumber($this->cno_by->ViewValue, 0, -2, -2, -2);
+			$this->cno_by->ViewCustomAttributes = "";
+
+			// dept_by
+			$curVal = strval($this->dept_by->CurrentValue);
+			if ($curVal != "") {
+				$this->dept_by->ViewValue = $this->dept_by->lookupCacheOption($curVal);
+				if ($this->dept_by->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->dept_by->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->dept_by->ViewValue = $this->dept_by->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->dept_by->ViewValue = $this->dept_by->CurrentValue;
+					}
+				}
+			} else {
+				$this->dept_by->ViewValue = NULL;
+			}
+			$this->dept_by->ViewCustomAttributes = "";
+
+			// sign1
+			$curVal = strval($this->sign1->CurrentValue);
+			if ($curVal != "") {
+				$this->sign1->ViewValue = $this->sign1->lookupCacheOption($curVal);
+				if ($this->sign1->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->sign1->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->sign1->ViewValue = $this->sign1->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->sign1->ViewValue = $this->sign1->CurrentValue;
+					}
+				}
+			} else {
+				$this->sign1->ViewValue = NULL;
+			}
+			$this->sign1->ViewCustomAttributes = "";
+
+			// sign2
+			$curVal = strval($this->sign2->CurrentValue);
+			if ($curVal != "") {
+				$this->sign2->ViewValue = $this->sign2->lookupCacheOption($curVal);
+				if ($this->sign2->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->sign2->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->sign2->ViewValue = $this->sign2->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->sign2->ViewValue = $this->sign2->CurrentValue;
+					}
+				}
+			} else {
+				$this->sign2->ViewValue = NULL;
+			}
+			$this->sign2->ViewCustomAttributes = "";
+
+			// sign3
+			$curVal = strval($this->sign3->CurrentValue);
+			if ($curVal != "") {
+				$this->sign3->ViewValue = $this->sign3->lookupCacheOption($curVal);
+				if ($this->sign3->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->sign3->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->sign3->ViewValue = $this->sign3->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->sign3->ViewValue = $this->sign3->CurrentValue;
+					}
+				}
+			} else {
+				$this->sign3->ViewValue = NULL;
+			}
+			$this->sign3->ViewCustomAttributes = "";
+
+			// sign4
+			$curVal = strval($this->sign4->CurrentValue);
+			if ($curVal != "") {
+				$this->sign4->ViewValue = $this->sign4->lookupCacheOption($curVal);
+				if ($this->sign4->ViewValue === NULL) { // Lookup from database
+					$filterWrk = "`id`" . SearchString("=", $curVal, DATATYPE_NUMBER, "");
+					$sqlWrk = $this->sign4->Lookup->getSql(FALSE, $filterWrk, '', $this);
+					$rswrk = Conn()->execute($sqlWrk);
+					if ($rswrk && !$rswrk->EOF) { // Lookup values found
+						$arwrk = [];
+						$arwrk[1] = $rswrk->fields('df');
+						$this->sign4->ViewValue = $this->sign4->displayValue($arwrk);
+						$rswrk->Close();
+					} else {
+						$this->sign4->ViewValue = $this->sign4->CurrentValue;
+					}
+				}
+			} else {
+				$this->sign4->ViewValue = NULL;
+			}
+			$this->sign4->ViewCustomAttributes = "";
+
+			// tr_no
+			$this->tr_no->LinkCustomAttributes = "";
+			$this->tr_no->HrefValue = "";
+			$this->tr_no->TooltipValue = "";
+
+			// tr_date
+			$this->tr_date->LinkCustomAttributes = "";
+			$this->tr_date->HrefValue = "";
+			$this->tr_date->TooltipValue = "";
+
+			// ho_to
+			$this->ho_to->LinkCustomAttributes = "";
+			$this->ho_to->HrefValue = "";
+			$this->ho_to->TooltipValue = "";
+
+			// cno_to
+			$this->cno_to->LinkCustomAttributes = "";
+			$this->cno_to->HrefValue = "";
+			$this->cno_to->TooltipValue = "";
+
+			// dept_to
+			$this->dept_to->LinkCustomAttributes = "";
+			$this->dept_to->HrefValue = "";
+			$this->dept_to->TooltipValue = "";
+
+			// ho_by
+			$this->ho_by->LinkCustomAttributes = "";
+			$this->ho_by->HrefValue = "";
+			$this->ho_by->TooltipValue = "";
+
+			// cno_by
+			$this->cno_by->LinkCustomAttributes = "";
+			$this->cno_by->HrefValue = "";
+			$this->cno_by->TooltipValue = "";
+
+			// dept_by
+			$this->dept_by->LinkCustomAttributes = "";
+			$this->dept_by->HrefValue = "";
+			$this->dept_by->TooltipValue = "";
+
+			// sign1
+			$this->sign1->LinkCustomAttributes = "";
+			$this->sign1->HrefValue = "";
+			$this->sign1->TooltipValue = "";
+
+			// sign2
+			$this->sign2->LinkCustomAttributes = "";
+			$this->sign2->HrefValue = "";
+			$this->sign2->TooltipValue = "";
+
+			// sign3
+			$this->sign3->LinkCustomAttributes = "";
+			$this->sign3->HrefValue = "";
+			$this->sign3->TooltipValue = "";
+
+			// sign4
+			$this->sign4->LinkCustomAttributes = "";
+			$this->sign4->HrefValue = "";
+			$this->sign4->TooltipValue = "";
 		}
 
 		// Call Row Rendered event
 		if ($this->RowType != ROWTYPE_AGGREGATEINIT)
 			$this->Row_Rendered();
+	}
+
+	// Set up detail parms based on QueryString
+	protected function setupDetailParms()
+	{
+
+		// Get the keys for master table
+		$detailTblVar = Get(Config("TABLE_SHOW_DETAIL"));
+		if ($detailTblVar !== NULL) {
+			$this->setCurrentDetailTable($detailTblVar);
+		} else {
+			$detailTblVar = $this->getCurrentDetailTable();
+		}
+		if ($detailTblVar != "") {
+			$detailTblVar = explode(",", $detailTblVar);
+			if (in_array("t102_ho_detail", $detailTblVar)) {
+				if (!isset($GLOBALS["t102_ho_detail_grid"]))
+					$GLOBALS["t102_ho_detail_grid"] = new t102_ho_detail_grid();
+				if ($GLOBALS["t102_ho_detail_grid"]->DetailView) {
+					$GLOBALS["t102_ho_detail_grid"]->CurrentMode = "view";
+
+					// Save current master table to detail table
+					$GLOBALS["t102_ho_detail_grid"]->setCurrentMasterTable($this->TableVar);
+					$GLOBALS["t102_ho_detail_grid"]->setStartRecordNumber(1);
+					$GLOBALS["t102_ho_detail_grid"]->hohead_id->IsDetailKey = TRUE;
+					$GLOBALS["t102_ho_detail_grid"]->hohead_id->CurrentValue = $this->id->CurrentValue;
+					$GLOBALS["t102_ho_detail_grid"]->hohead_id->setSessionValue($GLOBALS["t102_ho_detail_grid"]->hohead_id->CurrentValue);
+				}
+			}
+		}
 	}
 
 	// Set up Breadcrumb
@@ -1036,7 +1405,7 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 		global $Breadcrumb, $Language;
 		$Breadcrumb = new Breadcrumb();
 		$url = substr(CurrentUrl(), strrpos(CurrentUrl(), "/")+1);
-		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t203_userlevelpermissionslist.php"), "", $this->TableVar, TRUE);
+		$Breadcrumb->add("list", $this->TableVar, $this->addMasterUrl("t101_ho_headlist.php"), "", $this->TableVar, TRUE);
 		$pageId = "view";
 		$Breadcrumb->add("view", $pageId, $url);
 	}
@@ -1055,6 +1424,22 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 
 			// Set up lookup SQL and connection
 			switch ($fld->FieldVar) {
+				case "x_ho_to":
+					break;
+				case "x_dept_to":
+					break;
+				case "x_ho_by":
+					break;
+				case "x_dept_by":
+					break;
+				case "x_sign1":
+					break;
+				case "x_sign2":
+					break;
+				case "x_sign3":
+					break;
+				case "x_sign4":
+					break;
 				default:
 					$lookupFilter = "";
 					break;
@@ -1075,6 +1460,22 @@ class t203_userlevelpermissions_view extends t203_userlevelpermissions
 
 					// Format the field values
 					switch ($fld->FieldVar) {
+						case "x_ho_to":
+							break;
+						case "x_dept_to":
+							break;
+						case "x_ho_by":
+							break;
+						case "x_dept_by":
+							break;
+						case "x_sign1":
+							break;
+						case "x_sign2":
+							break;
+						case "x_sign3":
+							break;
+						case "x_sign4":
+							break;
 					}
 					$ar[strval($row[0])] = $row;
 					$rs->moveNext();
