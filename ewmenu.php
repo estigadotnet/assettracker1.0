@@ -20,8 +20,8 @@ $topMenu->addMenuItem(2, "mi_t002_location", $MenuLanguage->MenuPhrase("2", "Men
 $topMenu->addMenuItem(3, "mi_t003_signature", $MenuLanguage->MenuPhrase("3", "MenuText"), $MenuRelativePath . "t003_signaturelist.php", 10, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t003_signature'), FALSE, FALSE, "", "", TRUE);
 $topMenu->addMenuItem(4, "mi_t004_asset", $MenuLanguage->MenuPhrase("4", "MenuText"), $MenuRelativePath . "t004_assetlist.php", 10, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t004_asset'), FALSE, FALSE, "", "", TRUE);
 $topMenu->addMenuItem(34, "mci_Proses", $MenuLanguage->MenuPhrase("34", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
-$topMenu->addMenuItem(5, "mi_t101_opname", $MenuLanguage->MenuPhrase("5", "MenuText"), $MenuRelativePath . "t101_opnamelist.php", 34, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t101_opname'), FALSE, FALSE, "", "", TRUE);
 $topMenu->addMenuItem(44, "mci_Handover", $MenuLanguage->MenuPhrase("44", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
+$topMenu->addMenuItem(5, "mi_t101_opname", $MenuLanguage->MenuPhrase("5", "MenuText"), $MenuRelativePath . "t101_opnamelist.php", 34, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t101_opname'), FALSE, FALSE, "", "", TRUE);
 $topMenu->addMenuItem(45, "mci_Disposal", $MenuLanguage->MenuPhrase("45", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
 $topMenu->addMenuItem(46, "mci_Sold", $MenuLanguage->MenuPhrase("46", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
 $topMenu->addMenuItem(27, "mci_Report", $MenuLanguage->MenuPhrase("27", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
@@ -42,8 +42,8 @@ $sideMenu->addMenuItem(2, "mi_t002_location", $MenuLanguage->MenuPhrase("2", "Me
 $sideMenu->addMenuItem(3, "mi_t003_signature", $MenuLanguage->MenuPhrase("3", "MenuText"), $MenuRelativePath . "t003_signaturelist.php", 10, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t003_signature'), FALSE, FALSE, "", "", TRUE);
 $sideMenu->addMenuItem(4, "mi_t004_asset", $MenuLanguage->MenuPhrase("4", "MenuText"), $MenuRelativePath . "t004_assetlist.php", 10, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t004_asset'), FALSE, FALSE, "", "", TRUE);
 $sideMenu->addMenuItem(34, "mci_Proses", $MenuLanguage->MenuPhrase("34", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
-$sideMenu->addMenuItem(5, "mi_t101_opname", $MenuLanguage->MenuPhrase("5", "MenuText"), $MenuRelativePath . "t101_opnamelist.php", 34, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t101_opname'), FALSE, FALSE, "", "", TRUE);
 $sideMenu->addMenuItem(44, "mci_Handover", $MenuLanguage->MenuPhrase("44", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
+$sideMenu->addMenuItem(5, "mi_t101_opname", $MenuLanguage->MenuPhrase("5", "MenuText"), $MenuRelativePath . "t101_opnamelist.php", 34, "", AllowListMenu('{A1916BF1-858E-4493-B275-C510122AD7E3}t101_opname'), FALSE, FALSE, "", "", TRUE);
 $sideMenu->addMenuItem(45, "mci_Disposal", $MenuLanguage->MenuPhrase("45", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
 $sideMenu->addMenuItem(46, "mci_Sold", $MenuLanguage->MenuPhrase("46", "MenuText"), "", 34, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);
 $sideMenu->addMenuItem(27, "mci_Report", $MenuLanguage->MenuPhrase("27", "MenuText"), "", -1, "", IsLoggedIn(), FALSE, TRUE, "", "", TRUE);

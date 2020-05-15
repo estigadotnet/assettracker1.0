@@ -32,6 +32,15 @@ function Database_Connecting(&$info) {
 	//	$info["pass"] = "";
 	//}
 
+	if (CurrentHost() == "asset.aimpglobal.com") { // not connecting to local PC
+
+		// connect to the production database 
+		$info["host"] = "mysql.hostinger.co.id";
+		$info["user"] = "u197022578_asset";
+		$info["pass"] = "PresarioCQ43";
+		$info["db"] = "u197022578_asset1_0";
+		$info["port"] = "3306";
+	}
 }
 
 // Database Connected event

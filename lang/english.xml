@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<ew-language date="2020/5/14" version="16.0.1" id="en" name="English" desc="English" author="e.World Technology Ltd.">
+<ew-language date="2020/5/15" version="16.0.1" id="en" name="English" desc="English" author="e.World Technology Ltd.">
   <!--
 	*** Important Notes:
 	1. Language ID should follow: https://developers.google.com/recaptcha/docs/language,
@@ -877,11 +877,11 @@
     <menu id="34">
       <phrase id="menutext" value="Proses" />
     </menu>
-    <menu id="5">
-      <phrase id="menutext" value="Opname" />
-    </menu>
     <menu id="44">
       <phrase id="menutext" value="Handover" />
+    </menu>
+    <menu id="5">
+      <phrase id="menutext" value="Opname" />
     </menu>
     <menu id="45">
       <phrase id="menutext" value="Disposal" />
