@@ -866,7 +866,7 @@
       <phrase id="menutext" value="Property" />
     </menu>
     <menu id="2">
-      <phrase id="menutext" value="Area - Category - Location" />
+      <phrase id="menutext" value="Department" />
     </menu>
     <menu id="3">
       <phrase id="menutext" value="Signature" />
@@ -950,12 +950,12 @@
       </field>
     </table>
     <table id="t002_location">
-      <phrase id="tblcaption" value="Area - Category - Location" />
+      <phrase id="tblcaption" value="Department" />
       <field id="id">
         <phrase id="fldcaption" value="id" />
       </field>
       <field id="location">
-        <phrase id="fldcaption" value="Area - Category - Location" />
+        <phrase id="fldcaption" value="Department" />
       </field>
     </table>
     <table id="t003_signature">
@@ -976,7 +976,7 @@
         <phrase id="fldcaption" value="Property" />
       </field>
       <field id="location_id">
-        <phrase id="fldcaption" value="Location" />
+        <phrase id="fldcaption" value="Department" />
       </field>
       <field id="signature_id">
         <phrase id="fldcaption" value="Signature" />

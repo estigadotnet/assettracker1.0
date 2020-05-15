@@ -496,8 +496,8 @@ loadjs.ready(["ft201_usersadd", "datetimepicker"], function() {
 $selwrk = ConvertToBool($t201_users_add->Activated->CurrentValue) ? " checked" : "";
 ?>
 <div class="custom-control custom-checkbox d-inline-block">
-	<input type="checkbox" class="custom-control-input" data-table="t201_users" data-field="x_Activated" name="x_Activated[]" id="x_Activated[]_585009" value="1"<?php echo $selwrk ?><?php echo $t201_users_add->Activated->editAttributes() ?>>
-	<label class="custom-control-label" for="x_Activated[]_585009"></label>
+	<input type="checkbox" class="custom-control-input" data-table="t201_users" data-field="x_Activated" name="x_Activated[]" id="x_Activated[]_439649" value="1"<?php echo $selwrk ?><?php echo $t201_users_add->Activated->editAttributes() ?>>
+	<label class="custom-control-label" for="x_Activated[]_439649"></label>
 </div>
 </span>
 <?php echo $t201_users_add->Activated->CustomMsg ?></div></div>

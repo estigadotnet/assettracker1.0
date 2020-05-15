@@ -39,7 +39,7 @@ $USER_LEVEL_PRIVS = [["{A1916BF1-858E-4493-B275-C510122AD7E3}d301_home","-2","72
 $USER_LEVEL_TABLES = [["d301_home","d301_home","Home",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
 	["r001_asset","r001_asset","Asset",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
 	["t001_property","t001_property","Property",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
-	["t002_location","t002_location","Area - Category - Location",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
+	["t002_location","t002_location","Department",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
 	["t003_signature","t003_signature","Signature",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
 	["t004_asset","t004_asset","Asset",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
 	["t101_opname","t101_opname","Opname",true,"{A1916BF1-858E-4493-B275-C510122AD7E3}"],
